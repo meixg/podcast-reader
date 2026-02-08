@@ -44,15 +44,16 @@ Given that feature description, do this:
       git fetch --all --prune
       ```
 
-   b. Find the highest feature number across all sources for the short-name:
-      - Remote branches: `git ls-remote --heads origin | grep -E 'refs/heads/[0-9]+-<short-name>$'`
-      - Local branches: `git branch | grep -E '^[* ]*[0-9]+-<short-name>$'`
-      - Specs directories: Check for directories matching `specs/[0-9]+-<short-name>`
+   b. Find the highest feature number across **ALL** feature branches (not just matching short-name):
+      - Remote branches: `git ls-remote --heads origin | grep -E 'refs/heads/[0-9]+-' | sed 's/.*refs\/heads\///' | sed 's/-.*//' | sed 's/^0*//'`
+      - Local branches: `git branch | grep -E '^[* ]*[0-9]+-' | sed 's/^[* ]*//' | sed 's/-.*//' | sed 's/^0*//'`
+      - Specs directories: `ls -d specs/[0-9]*-*/ 2>/dev/null | xargs -I {} basename {} | sed 's/-.*//' | sed 's/^0*//'`
 
    c. Determine the next available number:
-      - Extract all numbers from all three sources
-      - Find the highest number N
+      - Extract all numbers from all three sources (ignore empty results)
+      - Find the highest number N across ALL branches/directories
       - Use N+1 for the new branch number
+      - **CRITICAL**: Do NOT filter by short-name - use the global maximum to prevent conflicts
 
    d. Run the script `.specify/scripts/powershell/create-new-feature.ps1 -Json "$ARGUMENTS"` with the calculated number and short-name:
       - Pass `--number N+1` and `--short-name "your-short-name"` along with the feature description
@@ -61,8 +62,8 @@ Given that feature description, do this:
 
    **IMPORTANT**:
    - Check all three sources (remote branches, local branches, specs directories) to find the highest number
-   - Only match branches/directories with the exact short-name pattern
-   - If no existing branches/directories found with this short-name, start with number 1
+   - Check **ALL** numbered branches/directories regardless of short-name to find the global maximum
+   - If no existing numbered branches/directories exist, start with number 1
    - You must only ever run this script once per feature
    - The JSON is provided in the terminal as output - always refer to it to get the actual content you're looking for
    - The JSON output will contain BRANCH_NAME and SPEC_FILE paths

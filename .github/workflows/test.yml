@@ -1,0 +1,59 @@
+name: Test
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        go-version: ['1.25', '1.26']
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: ${{ matrix.go-version }}
+        cache: true
+
+    - name: Install dependencies
+      run: go mod download
+
+    - name: Verify dependencies
+      run: go mod verify
+
+    - name: Run go vet
+      run: go vet ./...
+
+    - name: Run go fmt check
+      run: |
+        if [ -n "$(gofmt -l .)" ]; then
+          echo "Go code is not formatted:"
+          gofmt -d .
+          exit 1
+        fi
+
+    - name: Run tests
+      run: go test -v -race -coverprofile=coverage.out -covermode=atomic ./...
+
+    - name: Display coverage report
+      run: |
+        echo "=== Coverage Summary ==="
+        go tool cover -func=coverage.out | tail -n 1
+        echo ""
+        echo "=== Detailed Coverage by Package ==="
+        go tool cover -func=coverage.out | grep -E '^github.com' | column -t
+
+    - name: Build
+      run: |
+        go build -v -o podcast-downloader ./cmd/podcast-downloader
+        go build -v -o podcast-api-server ./cmd/server

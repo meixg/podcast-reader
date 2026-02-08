@@ -17,7 +17,11 @@ Auto-generated from feature plans. Last updated: 2026-02-08 (Feature 2: Save Cov
 - **github.com/fatih/color** (v1.18.0): Colored console output
 
 ### Web Service (Future)
-- **Frontend**: Vue 3 + TypeScript + Vite (planned for web service)
+- **Frontend**: Vue 3 + TypeScript + Vite + Tailwind CSS (planned for web service)
+  - Vue 3 Composition API for component logic
+  - TypeScript strict mode for type safety
+  - Tailwind CSS for utility-first styling
+  - No external state management (use Vue 3 reactive state)
 - **Backend**: RESTful APIs with Go (planned for web service)
 
 ## Project Structure
@@ -74,12 +78,13 @@ frontend/
 │   ├── components/       # Vue components
 │   ├── views/           # Page components
 │   ├── services/        # API calls
-│   ├── stores/          # Pinia stores
+│   ├── composables/     # Vue 3 composables for shared logic
 │   ├── types/           # TypeScript types
 │   └── utils/           # Utilities
 ├── public/
 ├── package.json
 ├── vite.config.ts
+├── tailwind.config.js
 └── tsconfig.json
 ```
 

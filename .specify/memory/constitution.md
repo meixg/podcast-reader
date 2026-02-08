@@ -1,11 +1,11 @@
 <!--
 Sync Impact Report:
-- Version change: 2.0.0 → 2.0.1 (PATCH: Template consistency updates - no constitutional changes)
-- Modified principles: None
-- Added sections: None
+- Version change: 2.0.1 → 2.1.0 (MINOR: Frontend technology stack updates)
+- Modified principles: Frontend Standards - State Management (removed Pinia, use Vue 3 Composition API only)
+- Added sections: Frontend Standards - Styling (Tailwind CSS)
 - Removed sections: None
-- Templates requiring updates: ✅ plan-template.md (updated Constitution Check), ✅ tasks-template.md (updated Go/Vue paths), ✅ spec-template.md (verified alignment)
-- Follow-up TODOs: None
+- Templates requiring updates: CLAUDE.md (update frontend tech stack), plan-template.md (if references Pinia)
+- Follow-up TODOs: Update CLAUDE.md to reflect simplified state management and Tailwind CSS
 -->
 
 # Podcast Reader Constitution
@@ -32,8 +32,11 @@ All functionality MUST be accessible via REST APIs with OpenAPI documentation. S
 ### Vue.js Architecture
 Vue 3 with Composition API, TypeScript for type safety. Vite for build tooling with hot reload. Component-based architecture with reusable UI elements. Responsive design for mobile and desktop access.
 
+### Styling
+Tailwind CSS for utility-first styling. Responsive design with mobile-first approach. Consistent design system with Tailwind's configuration. No CSS preprocessors needed.
+
 ### State Management
-Use Pinia for complex state, local state for simple components. Implement proper loading states, error handling, and user feedback for all async operations. Store process IDs and results in component state.
+Use Vue 3 Composition API with reactive state for component-level state management. No external state management library needed for current simple application scope. Implement proper loading states, error handling, and user feedback for all async operations. Store process IDs and results in component state.
 
 ### Build Quality
 ESLint + Prettier for code formatting. TypeScript strict mode enabled. Automated testing with Vitest for unit tests and Cypress for e2e tests. Bundle size optimization and lazy loading for performance.
@@ -99,4 +102,4 @@ Automatic retry with exponential backoff for transient failures. Manual retry op
 - MINOR: New features, new external integrations, additional endpoints
 - PATCH: Bug fixes, UI improvements, documentation updates, performance optimizations
 
-**Version**: 2.0.1 | **Ratified**: 2025-12-21 | **Last Amended**: 2026-02-08
+**Version**: 2.1.0 | **Ratified**: 2025-12-21 | **Last Amended**: 2026-02-08

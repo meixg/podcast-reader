@@ -225,7 +225,7 @@ podcast-reader/
 
 ## API 文档 (API Documentation)
 
-详细的 OpenAPI 规范文档请参阅：[specs/003-podcast-api-server/contracts/openapi.yaml](specs/003-podcast-api-server/contracts/openapi.yaml)
+详细的 OpenAPI 规范文档请参阅：[specs/3-podcast-api-server/contracts/openapi.yaml](specs/3-podcast-api-server/contracts/openapi.yaml)
 
 ## 依赖项 (Dependencies)
 

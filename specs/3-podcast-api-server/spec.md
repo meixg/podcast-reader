@@ -1,6 +1,6 @@
 # Feature Specification: Podcast API Server
 
-**Feature Branch**: `003-podcast-api-server`
+**Feature Branch**: `3-podcast-api-server`
 **Created**: 2026-02-08
 **Status**: Draft
 **Input**: User description: "在现有 podcast-downloader 的基础上，实现一个 http server，提供以下 API：1. 提交一个播客的下载任务，输入是一个 xiaoyuzhou 的 url；2. 过去所有已下载播客的列表，包括 title, audioUrl, shownotes, coverImage。"

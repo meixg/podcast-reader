@@ -1,6 +1,6 @@
 # Research: Podcast API Server
 
-**Feature**: 003-podcast-api-server
+**Feature**: 3-podcast-api-server
 **Date**: 2026-02-08
 **Phase**: Phase 0 - Technical Research & Decision Making
 

@@ -1,6 +1,6 @@
 # Quickstart Guide: Podcast API Server
 
-**Feature**: 003-podcast-api-server
+**Feature**: 3-podcast-api-server
 **Date**: 2026-02-08
 **Phase**: Phase 1 - Design & Contracts
 
@@ -32,7 +32,7 @@ This guide provides quick reference instructions for setting up, running, and te
 ```bash
 git clone https://github.com/meixg/podcast-reader.git
 cd podcast-reader
-git checkout 003-podcast-api-server
+git checkout 3-podcast-api-server
 ```
 
 ### 2. Install Dependencies
@@ -303,7 +303,7 @@ examples/xiaoyuzhou_urls            # Test URLs for development
 1. Define handler in `internal/server/handlers.go`
 2. Register route in `internal/server/server.go`
 3. Add tests in `tests/unit/handler_test.go`
-4. Update OpenAPI spec in `specs/003-podcast-api-server/contracts/openapi.yaml`
+4. Update OpenAPI spec in `specs/3-podcast-api-server/contracts/openapi.yaml`
 
 ## Debugging
 

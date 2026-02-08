@@ -1,7 +1,7 @@
 # Implementation Plan: Podcast API Server
 
-**Branch**: `003-podcast-api-server` | **Date**: 2026-02-08 | **Spec**: [spec.md](./spec.md)
-**Input**: Feature specification from `/specs/003-podcast-api-server/spec.md`
+**Branch**: `3-podcast-api-server` | **Date**: 2026-02-08 | **Spec**: [spec.md](./spec.md)
+**Input**: Feature specification from `/specs/3-podcast-api-server/spec.md`
 
 **Note**: This template is filled in by the `/speckit.plan` command. See `.specify/templates/commands/plan.md` for the execution workflow.
 
@@ -80,7 +80,7 @@ All core principles are satisfied. Two minor waivers granted for features out of
 ### Documentation (this feature)
 
 ```text
-specs/003-podcast-api-server/
+specs/3-podcast-api-server/
 ├── plan.md              # This file (/speckit.plan command output)
 ├── research.md          # Phase 0 output (/speckit.plan command)
 ├── data-model.md        # Phase 1 output (/speckit.plan command)

@@ -3,8 +3,8 @@
 Auto-generated from feature plans. Last updated: 2026-02-08 (Feature 2: Save Cover Images and Show Notes)
 
 ## Active Technologies
-- Go 1.25.5 + `net/http` (standard library), `github.com/PuerkitoBio/goquery` (existing), `github.com/fatih/color` (existing), existing downloader packages (003-podcast-api-server)
-- In-memory for active tasks (lost on restart), filesystem for downloaded podcasts (scanned on startup), no database (003-podcast-api-server)
+- Go 1.25.5 + `net/http` (standard library), `github.com/PuerkitoBio/goquery` (existing), `github.com/fatih/color` (existing), existing downloader packages (3-podcast-api-server)
+- In-memory for active tasks (lost on restart), filesystem for downloaded podcasts (scanned on startup), no database (3-podcast-api-server)
 
 ### Backend
 - **Go 1.21+**: Primary language for CLI tools and web service backend
@@ -181,7 +181,7 @@ type URLExtractor interface {
 - Use `t.Run()` for subtests
 
 ## Recent Changes
-- 003-podcast-api-server: Added Go 1.25.5 + `net/http` (standard library), `github.com/PuerkitoBio/goquery` (existing), `github.com/fatih/color` (existing), existing downloader packages
+- 3-podcast-api-server: Added Go 1.25.5 + `net/http` (standard library), `github.com/PuerkitoBio/goquery` (existing), `github.com/fatih/color` (existing), existing downloader packages
 
 ### Feature 2: Save Cover Images and Show Notes (2026-02-08)
 **What it added**:

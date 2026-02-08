@@ -1,6 +1,6 @@
 # Tasks: Podcast API Server
 
-**Input**: Design documents from `/specs/003-podcast-api-server/`
+**Input**: Design documents from `/specs/3-podcast-api-server/`
 **Prerequisites**: plan.md, spec.md, data-model.md, contracts/openapi.yaml, research.md
 
 **Tests**: Per constitution and plan.md, tests are planned. Test tasks are included in each user story phase.

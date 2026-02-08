@@ -27,6 +27,15 @@ type Config struct {
 
 	// ValidateFiles controls whether to validate downloaded audio files
 	ValidateFiles bool
+
+	// ServerHost is the host address for the HTTP server
+	ServerHost string
+
+	// ServerPort is the port number for the HTTP server
+	ServerPort int
+
+	// Verbose enables verbose logging
+	Verbose bool
 }
 
 // DefaultConfig returns a configuration with sensible defaults.
@@ -39,6 +48,9 @@ func DefaultConfig() *Config {
 		RetryDelay:        1 * time.Second,
 		ShowProgress:      true,
 		ValidateFiles:     true,
+		ServerHost:        "localhost",
+		ServerPort:        8080,
+		Verbose:           false,
 	}
 }
 

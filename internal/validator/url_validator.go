@@ -26,8 +26,12 @@ type XiaoyuzhouURLValidator struct {
 
 // NewXiaoyuzhouURLValidator creates a new validator for Xiaoyuzhou FM URLs.
 func NewXiaoyuzhouURLValidator() *XiaoyuzhouURLValidator {
-	// Pattern matches: http(s)://*.xiaoyuzhoufm.com/episode/{episode_id}
-	pattern := regexp.MustCompile(`^https?://[a-z0-9\.]*xiaoyuzhoufm\.com/episode/[a-z0-9]+$`)
+	// Pattern matches Xiaoyuzhou FM episode URLs
+	// Supports both domain formats:
+	//   - https://www.xiaoyuzhoufm.com/episode/{episode_id}
+	//   - https://xiaoyuzhoufm.com/episode/{episode_id}
+	//   - https://www.xiaoyuzhou.fm/episode/{episode_id}
+	pattern := regexp.MustCompile(`^https?://([a-z0-9-]+\.)*xiaoyuzhoufm\.com/episode/.+$`)
 	return &XiaoyuzhouURLValidator{
 		pattern: pattern,
 	}

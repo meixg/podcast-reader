@@ -1,7 +1,28 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git fetch:*)",
+      "Bash(ls:*)",
+      "Bash(pwsh:*)",
+      "Bash(git checkout:*)",
+      "WebSearch",
+      "Bash(find:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(go mod init:*)",
+      "Bash(go get:*)",
+      "Bash(for:*)",
+      "Bash(do sed:*)",
+      "Bash(done)",
+      "Bash(go build:*)",
+      "Bash(cat:*)",
+      "Bash(go mod tidy:*)",
+      "Bash(./podcast-downloader:*)",
+      "Bash(timeout:*)",
+      "Bash(go run:*)",
+      "Bash(file:*)",
+      "Bash(gofmt:*)",
+      "Bash(go vet:*)"
     ]
   }
 }

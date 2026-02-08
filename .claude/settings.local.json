@@ -22,7 +22,9 @@
       "Bash(go run:*)",
       "Bash(file:*)",
       "Bash(gofmt:*)",
-      "Bash(go vet:*)"
+      "Bash(go vet:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ]
   }
 }

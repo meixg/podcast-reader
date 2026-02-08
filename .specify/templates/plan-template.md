@@ -33,7 +33,13 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+- [ ] **Go Backend Standards**: Code uses gofmt, follows Go conventions, includes proper error handling
+- [ ] **Service-Oriented Architecture**: Clear frontend/backend separation with RESTful APIs
+- [ ] **Asynchronous Processing First**: Long-running tasks are async with process IDs and status endpoints
+- [ ] **External Integration Resilience**: Circuit breakers, retry logic, graceful degradation for external services
+- [ ] **Web API First Design**: All functionality accessible via REST APIs with OpenAPI documentation
+- [ ] **Frontend Standards**: Vue 3 + Composition API + TypeScript with proper state management
+- [ ] **Testing Requirements**: Unit tests, integration tests, and appropriate E2E tests included
 
 ## Project Structure
 

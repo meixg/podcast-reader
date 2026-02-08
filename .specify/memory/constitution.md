@@ -1,16 +1,11 @@
 <!--
 Sync Impact Report:
-- Version change: 1.0.0 → 2.0.0 (MAJOR: Complete architectural realignment from Python CLI to Go+Vue web service)
-- Modified principles: All 5 principles completely redefined for web service architecture
-  - "Python Standards" → "Go Backend Standards"
-  - "Modular Package Design" → "Service-Oriented Architecture"
-  - "Test-First Development" → "Web Service Testing"
-  - "Robust Error Handling" → "Asynchronous Processing & Error Handling"
-  - "CLI Interface First" → "Web API First"
-- Added sections: Frontend Standards, External Integrations
-- Removed sections: CLI-specific testing requirements
-- Templates requiring updates: ⚠ plan-template.md (update technical context), ⚠ tasks-template.md (update paths and structure)
-- Follow-up TODOs: Update project structure references in templates
+- Version change: 2.0.0 → 2.0.1 (PATCH: Template consistency updates - no constitutional changes)
+- Modified principles: None
+- Added sections: None
+- Removed sections: None
+- Templates requiring updates: ✅ plan-template.md (updated Constitution Check), ✅ tasks-template.md (updated Go/Vue paths), ✅ spec-template.md (verified alignment)
+- Follow-up TODOs: None
 -->
 
 # Podcast Reader Constitution
@@ -104,4 +99,4 @@ Automatic retry with exponential backoff for transient failures. Manual retry op
 - MINOR: New features, new external integrations, additional endpoints
 - PATCH: Bug fixes, UI improvements, documentation updates, performance optimizations
 
-**Version**: 2.0.0 | **Ratified**: 2025-12-21 | **Last Amended**: 2025-12-21
+**Version**: 2.0.1 | **Ratified**: 2025-12-21 | **Last Amended**: 2026-02-08

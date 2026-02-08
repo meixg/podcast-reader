@@ -6,8 +6,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/meixg/podcast-reader/backend/internal/models"
 	"github.com/google/uuid"
+	"github.com/meixg/podcast-reader/backend/internal/models"
 )
 
 // TaskService manages download tasks in memory

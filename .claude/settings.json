@@ -38,7 +38,15 @@
       "Bash(.specify/scripts/bash/update-agent-context.sh:*)",
       "Bash(make:*)",
       "Bash(mkdir:*)",
-      "Bash(git pull:*)"
+      "Bash(git pull:*)",
+      "Bash(if [ -d \"/home/meixg/code/podcast-reader/specs/004-frontend-web-app/checklists\" ])",
+      "Bash(then echo \"exists\")",
+      "Bash(else echo \"not_found\")",
+      "Bash(fi)",
+      "Bash(test:*)",
+      "Bash(curl:*)",
+      "Bash(lsof:*)",
+      "Bash(git restore:*)"
     ]
   }
 }

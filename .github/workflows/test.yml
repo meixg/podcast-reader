@@ -54,4 +54,3 @@ jobs:
     - name: Build
       run: |
         go build -v -o podcast-downloader ./cmd/podcast-downloader
-        go build -v -o podcast-api-server ./cmd/podcast-server

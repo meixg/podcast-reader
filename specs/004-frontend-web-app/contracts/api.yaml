@@ -1,0 +1,270 @@
+openapi: 3.0.3
+info:
+  title: Podcast Management API
+  description: REST API for managing podcast downloads and episodes
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api
+    description: Local development server
+
+paths:
+  /episodes:
+    get:
+      summary: Get paginated list of downloaded episodes
+      operationId: getEpisodes
+      tags:
+        - Episodes
+      parameters:
+        - name: page
+          in: query
+          description: Page number (1-indexed)
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: pageSize
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            enum: [20, 50, 100]
+            default: 20
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedEpisodes'
+        '400':
+          description: Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+
+  /episodes/{id}/shownotes:
+    get:
+      summary: Get show notes for a specific episode
+      operationId: getEpisodeShowNotes
+      tags:
+        - Episodes
+      parameters:
+        - name: id
+          in: path
+          description: Episode ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  showNotes:
+                    type: string
+                    description: Full episode show notes
+        '404':
+          description: Episode not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+
+  /tasks:
+    get:
+      summary: Get list of all download tasks
+      operationId: getTasks
+      tags:
+        - Tasks
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DownloadTask'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+
+    post:
+      summary: Create a new download task
+      operationId: createTask
+      tags:
+        - Tasks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTaskRequest'
+      responses:
+        '201':
+          description: Task created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DownloadTask'
+        '400':
+          description: Invalid request or duplicate task
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+
+components:
+  schemas:
+    Episode:
+      type: object
+      required:
+        - id
+        - title
+        - podcastName
+        - duration
+        - fileSize
+        - downloadDate
+        - showNotes
+        - filePath
+      properties:
+        id:
+          type: string
+          description: Unique episode identifier
+        title:
+          type: string
+          maxLength: 500
+        podcastName:
+          type: string
+          maxLength: 200
+        duration:
+          type: string
+          pattern: '^([0-9]{1,2}:)?[0-9]{1,2}:[0-9]{2}$'
+        fileSize:
+          type: integer
+          format: int64
+          minimum: 0
+        downloadDate:
+          type: string
+          format: date-time
+        showNotes:
+          type: string
+          maxLength: 50000
+        filePath:
+          type: string
+        coverImagePath:
+          type: string
+
+    PaginatedEpisodes:
+      type: object
+      required:
+        - episodes
+        - total
+        - page
+        - pageSize
+        - totalPages
+      properties:
+        episodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Episode'
+        total:
+          type: integer
+          minimum: 0
+        page:
+          type: integer
+          minimum: 1
+        pageSize:
+          type: integer
+          enum: [20, 50, 100]
+        totalPages:
+          type: integer
+          minimum: 0
+
+    DownloadTask:
+      type: object
+      required:
+        - id
+        - url
+        - status
+        - createdAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        url:
+          type: string
+          format: uri
+        status:
+          type: string
+          enum: [pending, downloading, completed, failed]
+        createdAt:
+          type: string
+          format: date-time
+        completedAt:
+          type: string
+          format: date-time
+        progress:
+          type: integer
+          minimum: 0
+          maximum: 100
+        errorMessage:
+          type: string
+          maxLength: 1000
+        episodeId:
+          type: string
+
+    CreateTaskRequest:
+      type: object
+      required:
+        - url
+      properties:
+        url:
+          type: string
+          format: uri
+          description: Podcast episode URL (Xiaoyuzhou FM format)
+
+    APIError:
+      type: object
+      required:
+        - error
+        - code
+      properties:
+        error:
+          type: string
+          description: Human-readable error message
+        code:
+          type: string
+          description: Machine-readable error code
+          enum: [INVALID_URL, DUPLICATE_TASK, NOT_FOUND, SERVER_ERROR]
+        details:
+          type: object
+          additionalProperties: true
+          description: Additional error context

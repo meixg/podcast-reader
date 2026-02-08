@@ -112,14 +112,14 @@ func TestXiaoyuzhouURLValidator_ValidateURL_EdgeCases(t *testing.T) {
 			contains: "URL格式不正确",
 		},
 		{
-			name:     "URL with subdomain",
-			url:      "https://podcast.xiaoyuzhoufm.com/episode/12345678",
-			valid:    true,
+			name:  "URL with subdomain",
+			url:   "https://podcast.xiaoyuzhoufm.com/episode/12345678",
+			valid: true,
 		},
 		{
-			name:     "URL with multiple subdomains",
-			url:      "https://api.www.xiaoyuzhoufm.com/episode/12345678",
-			valid:    true,
+			name:  "URL with multiple subdomains",
+			url:   "https://api.www.xiaoyuzhoufm.com/episode/12345678",
+			valid: true,
 		},
 		{
 			name:     "missing protocol",

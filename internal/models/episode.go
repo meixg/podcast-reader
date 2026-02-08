@@ -75,8 +75,17 @@ func (e *Episode) Validate() error {
 		return fmt.Errorf("audio URL is required")
 	}
 
+	// Remove query parameters and fragment before checking extension
+	audioURL := e.AudioURL
+	if idx := strings.Index(audioURL, "?"); idx != -1 {
+		audioURL = audioURL[:idx]
+	}
+	if idx := strings.Index(audioURL, "#"); idx != -1 {
+		audioURL = audioURL[:idx]
+	}
+
 	// Check if AudioURL ends with .m4a
-	if !strings.HasSuffix(e.AudioURL, ".m4a") {
+	if !strings.HasSuffix(audioURL, ".m4a") {
 		return fmt.Errorf("audio URL must be .m4a format")
 	}
 

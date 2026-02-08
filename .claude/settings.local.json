@@ -36,7 +36,9 @@
       "Bash(.specify/scripts/bash/check-prerequisites.sh:*)",
       "Bash(.specify/scripts/bash/setup-plan.sh:*)",
       "Bash(.specify/scripts/bash/update-agent-context.sh:*)",
-      "Bash(make:*)"
+      "Bash(make:*)",
+      "Bash(mkdir:*)",
+      "Bash(git pull:*)"
     ]
   }
 }

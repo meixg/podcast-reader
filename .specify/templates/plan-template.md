@@ -17,29 +17,21 @@
   the iteration process.
 -->
 
-**Backend**: Go 1.21+ with RESTful APIs
-**Frontend**: Vue 3 + TypeScript + Vite
-**Primary Dependencies**: [e.g., gorilla/mux, gin, axios, pinia or NEEDS CLARIFICATION]
-**Storage**: File-based storage (no database)
-**Testing**: Go testing + Vitest + Cypress
-**Target Platform**: Web application (Linux server deployment)
-**Project Type**: Web application (frontend + backend)
-**Performance Goals**: [domain-specific, e.g., concurrent processing of 10 audio files, <5s API response time or NEEDS CLARIFICATION]
-**Constraints**: [domain-specific, e.g., async processing, external API rate limits, file size limits or NEEDS CLARIFICATION]
-**Scale/Scope**: [domain-specific, e.g., 100 concurrent users, processing 1GB audio/hour or NEEDS CLARIFICATION]
-**External Services**: Tencent Cloud (transcription), LLM API (briefing)
+**Language/Version**: [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION]  
+**Primary Dependencies**: [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION]  
+**Storage**: [if applicable, e.g., PostgreSQL, CoreData, files or N/A]  
+**Testing**: [e.g., pytest, XCTest, cargo test or NEEDS CLARIFICATION]  
+**Target Platform**: [e.g., Linux server, iOS 15+, WASM or NEEDS CLARIFICATION]
+**Project Type**: [single/web/mobile - determines source structure]  
+**Performance Goals**: [domain-specific, e.g., 1000 req/s, 10k lines/sec, 60 fps or NEEDS CLARIFICATION]  
+**Constraints**: [domain-specific, e.g., <200ms p95, <100MB memory, offline-capable or NEEDS CLARIFICATION]  
+**Scale/Scope**: [domain-specific, e.g., 10k users, 1M LOC, 50 screens or NEEDS CLARIFICATION]
 
 ## Constitution Check
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-- [ ] **Go Backend Standards**: Code uses gofmt, follows Go conventions, includes proper error handling
-- [ ] **Service-Oriented Architecture**: Clear frontend/backend separation with RESTful APIs
-- [ ] **Asynchronous Processing First**: Long-running tasks are async with process IDs and status endpoints
-- [ ] **External Integration Resilience**: Circuit breakers, retry logic, graceful degradation for external services
-- [ ] **Web API First Design**: All functionality accessible via REST APIs with OpenAPI documentation
-- [ ] **Frontend Standards**: Vue 3 + Composition API + TypeScript with proper state management
-- [ ] **Testing Requirements**: Unit tests, integration tests, and appropriate E2E tests included
+[Gates determined based on constitution file]
 
 ## Project Structure
 
@@ -64,34 +56,39 @@ specs/[###-feature]/
 -->
 
 ```text
-# Web application structure (DEFAULT)
+# [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
+src/
+├── models/
+├── services/
+├── cli/
+└── lib/
+
+tests/
+├── contract/
+├── integration/
+└── unit/
+
+# [REMOVE IF UNUSED] Option 2: Web application (when "frontend" + "backend" detected)
 backend/
-├── cmd/server/           # Application entry point
-├── internal/
-│   ├── handlers/         # HTTP handlers
-│   ├── services/         # Business logic
-│   ├── models/           # Data structures
-│   └── config/           # Configuration
-├── pkg/                  # Public packages
-├── storage/              # File-based storage
-│   ├── downloads/
-│   ├── transcripts/
-│   └── briefings/
-├── go.mod
-└── go.sum
+├── src/
+│   ├── models/
+│   ├── services/
+│   └── api/
+└── tests/
 
 frontend/
 ├── src/
-│   ├── components/       # Vue components
-│   ├── views/           # Page components
-│   ├── services/        # API calls
-│   ├── stores/          # Pinia stores
-│   ├── types/           # TypeScript types
-│   └── utils/           # Utilities
-├── public/
-├── package.json
-├── vite.config.ts
-└── tsconfig.json
+│   ├── components/
+│   ├── pages/
+│   └── services/
+└── tests/
+
+# [REMOVE IF UNUSED] Option 3: Mobile + API (when "iOS/Android" detected)
+api/
+└── [same as backend above]
+
+ios/ or android/
+└── [platform-specific structure: feature modules, UI flows, platform tests]
 ```
 
 **Structure Decision**: [Document the selected structure and reference the real

@@ -20,10 +20,10 @@ description: "Task list template for feature implementation"
 
 ## Path Conventions
 
-- **Web app**: `backend/`, `frontend/` at repository root
-- **Backend**: Go layout with `cmd/server/`, `internal/`, `pkg/`
-- **Frontend**: Vue.js layout with `src/components/`, `src/views/`, `src/services/`
-- Paths shown below assume web application - adjust based on plan.md structure
+- **Single project**: `src/`, `tests/` at repository root
+- **Web app**: `backend/src/`, `frontend/src/`
+- **Mobile**: `api/src/`, `ios/src/` or `android/src/`
+- Paths shown below assume single project - adjust based on plan.md structure
 
 <!-- 
   ============================================================================
@@ -62,7 +62,7 @@ description: "Task list template for feature implementation"
 
 Examples of foundational tasks (adjust based on your project):
 
-- [ ] T004 Setup file-based storage structure and cleanup policies
+- [ ] T004 Setup database schema and migrations framework
 - [ ] T005 [P] Implement authentication/authorization framework
 - [ ] T006 [P] Setup API routing and middleware structure
 - [ ] T007 Create base models/entities that all stories depend on
@@ -83,19 +83,17 @@ Examples of foundational tasks (adjust based on your project):
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T010 [P] [US1] Contract test for [endpoint] in backend/tests/integration/[name]_test.go
-- [ ] T011 [P] [US1] Integration test for [user journey] in frontend/tests/e2e/[name].cy.ts
+- [ ] T010 [P] [US1] Contract test for [endpoint] in tests/contract/test_[name].py
+- [ ] T011 [P] [US1] Integration test for [user journey] in tests/integration/test_[name].py
 
 ### Implementation for User Story 1
 
-- [ ] T012 [P] [US1] Create [Struct1] model in backend/internal/models/[struct1].go
-- [ ] T013 [P] [US1] Create [Struct2] model in backend/internal/models/[struct2].go
-- [ ] T014 [US1] Implement [Service] in backend/internal/services/[service].go (depends on T012, T013)
-- [ ] T015 [US1] Implement [endpoint] in backend/internal/handlers/[handler].go
-- [ ] T016 [US1] Create [Component] in frontend/src/components/[Component].vue
-- [ ] T017 [US1] Implement API client in frontend/src/services/[service].ts
-- [ ] T018 [US1] Add validation and error handling
-- [ ] T019 [US1] Add logging for user story 1 operations
+- [ ] T012 [P] [US1] Create [Entity1] model in src/models/[entity1].py
+- [ ] T013 [P] [US1] Create [Entity2] model in src/models/[entity2].py
+- [ ] T014 [US1] Implement [Service] in src/services/[service].py (depends on T012, T013)
+- [ ] T015 [US1] Implement [endpoint/feature] in src/[location]/[file].py
+- [ ] T016 [US1] Add validation and error handling
+- [ ] T017 [US1] Add logging for user story 1 operations
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently
 
@@ -109,16 +107,15 @@ Examples of foundational tasks (adjust based on your project):
 
 ### Tests for User Story 2 (OPTIONAL - only if tests requested) ⚠️
 
-- [ ] T020 [P] [US2] Integration test for [endpoint] in backend/tests/integration/[name]_test.go
-- [ ] T021 [P] [US2] E2E test for [user journey] in frontend/tests/e2e/[name].cy.ts
+- [ ] T018 [P] [US2] Contract test for [endpoint] in tests/contract/test_[name].py
+- [ ] T019 [P] [US2] Integration test for [user journey] in tests/integration/test_[name].py
 
 ### Implementation for User Story 2
 
-- [ ] T022 [P] [US2] Create [Struct] model in backend/internal/models/[struct].go
-- [ ] T023 [US2] Implement [Service] in backend/internal/services/[service].go
-- [ ] T024 [US2] Implement [endpoint] in backend/internal/handlers/[handler].go
-- [ ] T025 [US2] Create [Component] in frontend/src/components/[Component].vue
-- [ ] T026 [US2] Integrate with User Story 1 components (if needed)
+- [ ] T020 [P] [US2] Create [Entity] model in src/models/[entity].py
+- [ ] T021 [US2] Implement [Service] in src/services/[service].py
+- [ ] T022 [US2] Implement [endpoint/feature] in src/[location]/[file].py
+- [ ] T023 [US2] Integrate with User Story 1 components (if needed)
 
 **Checkpoint**: At this point, User Stories 1 AND 2 should both work independently
 
@@ -132,15 +129,14 @@ Examples of foundational tasks (adjust based on your project):
 
 ### Tests for User Story 3 (OPTIONAL - only if tests requested) ⚠️
 
-- [ ] T027 [P] [US3] Integration test for [endpoint] in backend/tests/integration/[name]_test.go
-- [ ] T028 [P] [US3] E2E test for [user journey] in frontend/tests/e2e/[name].cy.ts
+- [ ] T024 [P] [US3] Contract test for [endpoint] in tests/contract/test_[name].py
+- [ ] T025 [P] [US3] Integration test for [user journey] in tests/integration/test_[name].py
 
 ### Implementation for User Story 3
 
-- [ ] T029 [P] [US3] Create [Struct] model in backend/internal/models/[struct].go
-- [ ] T030 [US3] Implement [Service] in backend/internal/services/[service].go
-- [ ] T031 [US3] Implement [endpoint] in backend/internal/handlers/[handler].go
-- [ ] T032 [US3] Create [Component] in frontend/src/components/[Component].vue
+- [ ] T026 [P] [US3] Create [Entity] model in src/models/[entity].py
+- [ ] T027 [US3] Implement [Service] in src/services/[service].py
+- [ ] T028 [US3] Implement [endpoint/feature] in src/[location]/[file].py
 
 **Checkpoint**: All user stories should now be independently functional
 
@@ -157,7 +153,7 @@ Examples of foundational tasks (adjust based on your project):
 - [ ] TXXX [P] Documentation updates in docs/
 - [ ] TXXX Code cleanup and refactoring
 - [ ] TXXX Performance optimization across all stories
-- [ ] TXXX [P] Additional unit tests (if requested) in backend/tests/unit/ and frontend/tests/unit/
+- [ ] TXXX [P] Additional unit tests (if requested) in tests/unit/
 - [ ] TXXX Security hardening
 - [ ] TXXX Run quickstart.md validation
 
@@ -203,12 +199,12 @@ Examples of foundational tasks (adjust based on your project):
 
 ```bash
 # Launch all tests for User Story 1 together (if tests requested):
-Task: "Integration test for [endpoint] in backend/tests/integration/[name]_test.go"
-Task: "E2E test for [user journey] in frontend/tests/e2e/[name].cy.ts"
+Task: "Contract test for [endpoint] in tests/contract/test_[name].py"
+Task: "Integration test for [user journey] in tests/integration/test_[name].py"
 
 # Launch all models for User Story 1 together:
-Task: "Create [Struct1] model in backend/internal/models/[struct1].go"
-Task: "Create [Struct2] model in backend/internal/models/[struct2].go"
+Task: "Create [Entity1] model in src/models/[entity1].py"
+Task: "Create [Entity2] model in src/models/[entity2].py"
 ```
 
 ---

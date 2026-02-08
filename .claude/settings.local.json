@@ -29,7 +29,9 @@
       "Bash(git branch:*)",
       "Bash(grep:*)",
       "Bash(go:*)",
-      "Bash(tee:*)"
+      "Bash(tee:*)",
+      "Bash(git rebase:*)",
+      "Bash(git stash:*)"
     ]
   }
 }

@@ -1,50 +1,102 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report:
+- Version change: 2.0.0 → 2.0.1 (PATCH: Template consistency updates - no constitutional changes)
+- Modified principles: None
+- Added sections: None
+- Removed sections: None
+- Templates requiring updates: ✅ plan-template.md (updated Constitution Check), ✅ tasks-template.md (updated Go/Vue paths), ✅ spec-template.md (verified alignment)
+- Follow-up TODOs: None
+-->
+
+# Podcast Reader Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Go Backend Standards
+Go 1.21+ with strict formatting and best practices. All code MUST use gofmt, follow Go conventions, include comprehensive error handling, and use Go modules for dependency management. Concurrent processing with goroutines for long-running audio processing tasks.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### II. Service-Oriented Architecture
+Clear separation between frontend (Vue.js) and backend (Go server). Backend exposes RESTful APIs, frontend handles UI/UX. File-based storage for processing state and results (no database). Each major function (download, transcription, LLM processing) MUST be implemented as independent services.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. Asynchronous Processing First
+All audio processing tasks MUST be asynchronous. Return process ID immediately, provide status endpoints for tracking. Use job queues for managing concurrent processing. Implement timeout handling and progress tracking for long-running operations.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. External Integration Resilience
+All external service calls (Tencent Cloud, LLM APIs) MUST implement circuit breakers, retry logic with exponential backoff, and graceful degradation. Store raw responses for debugging. Implement cost controls and usage monitoring for third-party services.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### V. Web API First Design
+All functionality MUST be accessible via REST APIs with OpenAPI documentation. Support JSON request/response format. Implement proper HTTP status codes, CORS policies for frontend communication, and API versioning for future compatibility.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+## Frontend Standards
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### Vue.js Architecture
+Vue 3 with Composition API, TypeScript for type safety. Vite for build tooling with hot reload. Component-based architecture with reusable UI elements. Responsive design for mobile and desktop access.
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+### State Management
+Use Pinia for complex state, local state for simple components. Implement proper loading states, error handling, and user feedback for all async operations. Store process IDs and results in component state.
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+### Build Quality
+ESLint + Prettier for code formatting. TypeScript strict mode enabled. Automated testing with Vitest for unit tests and Cypress for e2e tests. Bundle size optimization and lazy loading for performance.
+
+## Backend Standards
+
+### Go Code Quality
+gofmt + golint + go vet for code quality. Use context for request-scoped values and cancellation. Structured logging with proper log levels. Graceful shutdown handling for in-flight processing.
+
+### API Design
+RESTful endpoints with consistent patterns: GET /status/{id}, POST /process, GET /result/{id}. Request validation with proper error responses. Rate limiting to prevent abuse. Health check endpoints for monitoring.
+
+### File Management
+Organized directory structure for processing artifacts: downloads/, transcripts/, briefings/. Cleanup policies for old files. Atomic file operations to prevent corruption. Unique filenames with process IDs.
+
+## Testing Requirements
+
+### Frontend Testing
+- Unit tests with Vitest for components and utilities
+- Integration tests for API interactions
+- E2E tests with Cypress for complete user workflows
+- Visual regression tests for UI consistency
+
+### Backend Testing
+- Unit tests for service functions with table-driven tests
+- Integration tests for API endpoints
+- Mock external services (Tencent Cloud, LLM)
+- Load testing for concurrent processing scenarios
+
+### System Testing
+- Full workflow tests: URL submission → processing → result retrieval
+- Error scenario testing: network failures, invalid URLs, service outages
+- Performance testing: concurrent user load, large file processing
+- Accessibility testing for web interface
+
+## External Integrations
+
+### Tencent Cloud Integration
+Secure API key management with environment variables. Request/response logging for debugging. Implement audio format validation and size limits. Cost monitoring and usage quotas.
+
+### LLM Integration
+Abstract LLM interface to support multiple providers. Prompt template management for consistent briefing generation. Response caching to reduce costs. Content filtering and safety checks.
+
+### Error Recovery
+Automatic retry with exponential backoff for transient failures. Manual retry options for permanent failures. Fallback processing paths when external services are unavailable. User notification system for integration issues.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+### Amendment Process
+- Proposed changes MUST be documented with impact analysis
+- Changes affecting core architecture require consensus approval
+- Frontend/backend coordination required for API changes
+- All changes update version according to semantic versioning
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+### Compliance Review
+- PR reviews MUST check constitutional compliance for both frontend and backend
+- Automated checks verify code quality, test coverage, and API contract compliance
+- Monthly reviews of external service usage and costs
+- Security reviews for API keys and external integrations
+
+### Versioning Policy
+- MAJOR: Architectural changes, breaking API changes, technology stack changes
+- MINOR: New features, new external integrations, additional endpoints
+- PATCH: Bug fixes, UI improvements, documentation updates, performance optimizations
+
+**Version**: 2.0.1 | **Ratified**: 2025-12-21 | **Last Amended**: 2026-02-08

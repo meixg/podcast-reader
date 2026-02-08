@@ -3,6 +3,8 @@
 Auto-generated from feature plans. Last updated: 2026-02-08 (Feature 2: Save Cover Images and Show Notes)
 
 ## Active Technologies
+- Go 1.25.5 + `net/http` (standard library), `github.com/PuerkitoBio/goquery` (existing), `github.com/fatih/color` (existing), existing downloader packages (003-podcast-api-server)
+- In-memory for active tasks (lost on restart), filesystem for downloaded podcasts (scanned on startup), no database (003-podcast-api-server)
 
 ### Backend
 - **Go 1.21+**: Primary language for CLI tools and web service backend
@@ -179,59 +181,27 @@ type URLExtractor interface {
 - Use `t.Run()` for subtests
 
 ## Recent Changes
+- 003-podcast-api-server: Added Go 1.25.5 + `net/http` (standard library), `github.com/PuerkitoBio/goquery` (existing), `github.com/fatih/color` (existing), existing downloader packages
 
 ### Feature 2: Save Cover Images and Show Notes (2026-02-08)
 **What it added**:
 - Automatic cover image download alongside podcast audio
 - Show notes extraction and plain text file generation
-- Multi-fallback HTML extraction strategy for robustness
-- UTF-8 with BOM encoding for international character support
-- Graceful degradation (audio download continues even if cover/show notes fail)
-- Podcast subdirectories with simplified filenames (podcast.m4a, cover.jpg, shownotes.txt)
 
 **Technologies introduced**:
-- github.com/fatih/color (v1.18.0) for colored console output
-- No other new external dependencies (uses existing goquery)
-- UTF-8 BOM encoding for cross-platform text file compatibility
-- Magic byte detection for image format validation
 
 **Architectural decisions**:
-- Extended URLExtractor interface to return EpisodeMetadata struct (breaking change)
-- New services: ImageDownloader, ShowNotesSaver
-- Multi-fallback strategy for HTML element selection (aria-label → semantic selectors)
-- HTML to plain text conversion with structure preservation (links, lists, headers)
-- Image format preservation (JPEG, PNG, WebP) with format detection via magic bytes
-- File organization: Podcast title subdirectories with simplified asset filenames
 
 **Key implementation details**:
-- Cover image extraction: `.avater-container` first image (Xiaoyuzhou FM specific)
-- Show notes extraction: `<section aria-label="节目show notes">` → aria-label containing "show notes" → semantic selectors
-- Image validation: Magic byte detection (JPEG: FF D8 FF, PNG: 89 50 4E 47, WebP: RIFF....WEBP)
-- Text formatting: Links → "text (URL: url)", lists → bullets/numbers, headers → uppercase with underline
-- Error handling: Detailed warning messages with specific reasons, no failure for non-critical assets
-- HTTP timeouts: 1 hour for audio, 2 minutes for images
 
 ---
 
 ### Feature 1: Podcast Audio Downloader (2026-02-08)
 **What it added**:
-- CLI tool for downloading podcast episodes from Xiaoyuzhou FM
-- HTML parsing using goquery to extract audio URLs
-- HTTP client with retry logic and exponential backoff
-- Progress bar display for large file downloads
-- File validation using magic bytes
-- URL and file path validation
 
 **Technologies introduced**:
-- github.com/PuerkitoBio/goquery (HTML parsing)
-- github.com/urfave/cli/v2 (CLI framework)
-- github.com/schollz/progressbar/v3 (progress display)
 
 **Architectural decisions**:
-- CLI tool instead of web service (constitutional exception justified for utility tool)
-- Sequential download processing (simpler for MVP)
-- No database persistence (ephemeral in-memory data)
-- File-based storage for downloaded audio
 
 ---
 

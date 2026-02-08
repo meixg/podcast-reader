@@ -1,8 +1,8 @@
-# Podcast Downloader
+# Podcast Reader
 
-一个简单的命令行工具，用于从小宇宙FM下载播客音频文件。
+Podcast下载工具和API服务器，支持从小宇宙FM下载播客音频。
 
-A simple CLI tool to download podcast audio files from Xiaoyuzhou FM.
+Podcast download tool and API server for downloading podcast audio from Xiaoyuzhou FM.
 
 ## 功能特性 (Features)
 
@@ -14,6 +14,10 @@ A simple CLI tool to download podcast audio files from Xiaoyuzhou FM.
 - 🔄 自动重试机制（可配置）
 - ⚡ 覆盖或跳过已存在的文件
 - 🛠️ 完整的错误提示（中文）
+- 🖼️ 自动下载封面图片
+- 📄 保存节目笔记（show notes）
+- 🌐 HTTP API服务器接口
+- 📋 任务状态查询和播客列表
 
 ## 安装 (Installation)
 
@@ -27,8 +31,11 @@ cd podcast-reader
 # 下载依赖
 go mod download
 
-# 编译
+# 编译 CLI 工具
 go build -o podcast-downloader cmd/podcast-downloader/main.go
+
+# 编译 API 服务器
+go build -o podcast-server cmd/podcast-server/main.go
 ```
 
 ### 系统要求 (Requirements)
@@ -37,13 +44,15 @@ go build -o podcast-downloader cmd/podcast-downloader/main.go
 
 ## 使用方法 (Usage)
 
-### 基本用法 (Basic Usage)
+### CLI 工具 (CLI Tool)
+
+#### 基本用法 (Basic Usage)
 
 ```bash
 ./podcast-downloader "https://www.xiaoyuzhoufm.com/episode/69392768281939cce65925d3"
 ```
 
-### 命令行选项 (Options)
+#### 命令行选项 (Options)
 
 ```
 OPTIONS:
@@ -56,77 +65,155 @@ OPTIONS:
    --version, -v             显示版本号
 ```
 
-### 使用示例 (Examples)
-
-#### 指定输出目录 (Specify output directory)
+#### 使用示例 (Examples)
 
 ```bash
+# 指定输出目录
 ./podcast-downloader -o ~/podcasts "https://www.xiaoyuzhoufm.com/episode/69392768281939cce65925d3"
-```
 
-#### 覆盖已存在的文件 (Overwrite existing files)
-
-```bash
+# 覆盖已存在的文件
 ./podcast-downloader --overwrite "https://www.xiaoyuzhoufm.com/episode/69392768281939cce65925d3"
-```
 
-#### 禁用进度条 (Disable progress bar)
-
-```bash
-./podcast-downloader --no-progress "https://www.xiaoyuzhoufm.com/episode/69392768281939cce65925d3"
-```
-
-#### 调整超时和重试次数 (Adjust timeout and retries)
-
-```bash
+# 调整超时和重试次数
 ./podcast-downloader --timeout 60s --retry 5 "https://www.xiaoyuzhoufm.com/episode/69392768281939cce65925d3"
 ```
 
-### 批量下载 (Batch Download)
+### API 服务器 (API Server)
 
-你可以使用shell脚本批量下载多集播客：
+#### 启动服务器 (Start Server)
 
 ```bash
-#!/bin/bash
-# batch_download.sh
+# 使用默认配置（端口8080，下载目录./downloads）
+./podcast-server
 
-URLS=(
-  "https://www.xiaoyuzhoufm.com/episode/69392768281939cce65925d3"
-  "https://www.xiaoyuzhoufm.com/episode/another-episode-id"
-  "https://www.xiaoyuzhoufm.com/episode/yet-another-episode-id"
-)
+# 自定义配置
+./podcast-server -port 3000 -downloads ~/podcasts -verbose
+```
 
-for url in "${URLS[@]}"; do
-  ./podcast-downloader "$url"
-done
+#### 服务器选项 (Server Options)
+
+```
+OPTIONS:
+   --host value       服务器绑定地址 (default: "0.0.0.0")
+   --port value       HTTP服务器端口 (default: 8080)
+   --downloads value  下载文件保存目录 (default: "./downloads")
+   --verbose          启用详细日志 (default: false)
+```
+
+#### API 端点 (API Endpoints)
+
+**1. 提交下载任务 (Submit Download Task)**
+
+```bash
+POST /tasks
+Content-Type: application/json
+
+{
+  "url": "https://www.xiaoyuzhoufm.com/episode/69392768281939cce65925d3"
+}
+```
+
+响应示例：
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "url": "https://www.xiaoyuzhoufm.com/episode/69392768281939cce65925d3",
+  "status": "accepted",
+  "created_at": "2026-02-08T10:30:00Z"
+}
+```
+
+**2. 查询任务状态 (Query Task Status)**
+
+```bash
+GET /tasks/{id}
+```
+
+响应示例：
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "url": "https://www.xiaoyuzhoufm.com/episode/69392768281939cce65925d3",
+  "status": "completed",
+  "progress": 100,
+  "created_at": "2026-02-08T10:30:00Z",
+  "started_at": "2026-02-08T10:30:01Z",
+  "completed_at": "2026-02-08T10:32:15Z",
+  "podcast": {
+    "title": "罗永浩的十字路口",
+    "audio_path": "/path/to/downloads/罗永浩的十字路口/podcast.m4a",
+    "cover_path": "/path/to/downloads/罗永浩的十字路口/cover.jpg",
+    "shownotes_path": "/path/to/downloads/罗永浩的十字路口/shownotes.txt"
+  }
+}
+```
+
+**3. 列出已下载的播客 (List Downloaded Podcasts)**
+
+```bash
+GET /podcasts?limit=100&offset=0
+```
+
+响应示例：
+```json
+{
+  "podcasts": [
+    {
+      "url": "https://www.xiaoyuzhoufm.com/episode/69392768281939cce65925d3",
+      "title": "罗永浩的十字路口",
+      "directory": "/path/to/downloads/罗永浩的十字路口",
+      "audio_file": "podcast.m4a",
+      "has_cover": true,
+      "has_shownotes": true
+    }
+  ],
+  "total": 1,
+  "limit": 100,
+  "offset": 0
+}
+```
+
+#### 使用 curl 测试 API (Test API with curl)
+
+```bash
+# 提交下载任务
+curl -X POST http://localhost:8080/tasks \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://www.xiaoyuzhoufm.com/episode/69392768281939cce65925d3"}'
+
+# 查询任务状态
+curl http://localhost:8080/tasks/{task_id}
+
+# 列出已下载的播客
+curl http://localhost:8080/podcasts
 ```
 
 ## 文件名格式 (Filename Format)
 
-下载的文件使用以下命名格式：
+下载的文件组织结构：
 
 ```
-{清理后的标题}_{集数ID}.m4a
+downloads/
+├── Podcast Title/
+│   ├── podcast.m4a       # 音频文件
+│   ├── cover.jpg         # 封面图片
+│   ├── shownotes.txt     # 节目笔记
+│   └── .metadata.json    # 元数据（包含原始URL）
 ```
-
-例如：
-```
-罗永浩的十字路口_Episode01_69392768281939cce65925d3.m4a
-```
-
-标题中的特殊字符（`< > : " / \ | ? *`）会被自动替换为下划线。
 
 ## 项目结构 (Project Structure)
 
 ```
 podcast-reader/
 ├── cmd/
-│   ├── podcast-downloader/    # 主程序入口
-│   └── inspect/               # HTML检查工具（调试用）
+│   ├── podcast-downloader/    # CLI工具入口
+│   └── podcast-server/        # API服务器入口
 ├── internal/
 │   ├── config/                # 配置管理
 │   ├── downloader/            # 下载器和URL提取器
 │   ├── models/                # 数据模型
+│   ├── server/                # HTTP服务器和处理器
+│   ├── taskmanager/           # 任务管理和目录扫描
 │   └── validator/             # URL和文件路径验证
 ├── pkg/
 │   └── httpclient/            # HTTP客户端（带重试）
@@ -136,11 +223,16 @@ podcast-reader/
 └── README.md
 ```
 
+## API 文档 (API Documentation)
+
+详细的 OpenAPI 规范文档请参阅：[specs/003-podcast-api-server/contracts/openapi.yaml](specs/003-podcast-api-server/contracts/openapi.yaml)
+
 ## 依赖项 (Dependencies)
 
 - [goquery](https://github.com/PuerkitoBio/goquery) - HTML解析
 - [urfave/cli](https://github.com/urfave/cli) - CLI框架
 - [progressbar/v3](https://github.com/schollz/progressbar) - 进度条显示
+- [google/uuid](https://github.com/google/uuid) - UUID生成
 
 ## 开发 (Development)
 

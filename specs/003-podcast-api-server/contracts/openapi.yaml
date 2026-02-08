@@ -1,0 +1,452 @@
+openapi: 3.0.3
+info:
+  title: Podcast API Server
+  description: |
+    HTTP API for downloading podcasts from Xiaoyuzhou FM and managing a local library.
+    Provides endpoints for submitting download tasks, querying task status, and listing downloaded podcasts.
+  version: 1.0.0
+  contact:
+    name: Podcast Reader Project
+    url: https://github.com/meixg/podcast-reader
+
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+  - url: http://localhost:3000
+    description: Alternative local port
+
+tags:
+  - name: tasks
+    description: Download task management
+  - name: podcasts
+    description: Podcast library management
+
+paths:
+  /tasks:
+    post:
+      tags:
+        - tasks
+      summary: Submit a download task
+      description: |
+        Submits a new podcast download task for the given Xiaoyuzhou FM URL.
+        The download is processed asynchronously in the background.
+        If the URL has already been downloaded or is currently being downloaded,
+        returns the existing task or download information instead of creating a duplicate.
+      operationId: submitTask
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - url
+              properties:
+                url:
+                  type: string
+                  format: uri
+                  pattern: '^https?://([a-z0-9-]+\.)?xiaoyuzhou\.fm(?:m)?\.com/episode/.+$'
+                  example: https://www.xiaoyuzhoufm.com/episode/69392768281939cce65925d3
+                  description: The Xiaoyuzhou FM episode URL to download (supports both xiaoyuzhou.fm and xiaoyuzhoufm.com domains)
+      responses:
+        '202':
+          description: Task accepted and processing started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskResponse'
+        '400':
+          description: Invalid URL or malformed request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                invalidFormat:
+                  summary: Invalid URL format
+                  value:
+                    error:
+                      code: INVALID_URL
+                      message: The provided URL is not valid
+                      details: URL must start with http:// or https://
+                wrongDomain:
+                  summary: Wrong domain
+                  value:
+                    error:
+                      code: INVALID_URL
+                      message: The provided URL is not from Xiaoyuzhou FM
+                      details: URL must contain xiaoyuzhou.fm domain
+        '409':
+          description: URL already being downloaded
+          description: Returns existing in-progress task
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskResponse'
+        '303':
+          description: URL already downloaded
+          description: Returns existing completed download information
+          headers:
+            Location:
+              description: URL to the completed task
+              schema:
+                type: string
+              example: /tasks/550e8400-e29b-41d4-a716-446655440000
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Service unavailable (too many concurrent downloads)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /tasks/{taskId}:
+    get:
+      tags:
+        - tasks
+      summary: Get task status
+      description: |
+        Retrieves the current status and details of a download task.
+        Returns task status, progress information, and downloaded file paths if completed.
+      operationId: getTask
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          description: The unique task identifier (UUID)
+          schema:
+            type: string
+            format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+      responses:
+        '200':
+          description: Task found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskResponse'
+        '404':
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error:
+                  code: TASK_NOT_FOUND
+                  message: The specified task does not exist
+                  details: No task found with ID: 550e8400-e29b-41d4-a716-446655440000
+
+  /podcasts:
+    get:
+      tags:
+        - podcasts
+      summary: List downloaded podcasts
+      description: |
+        Retrieves a list of all downloaded podcasts with their metadata.
+        Supports pagination for large collections.
+      operationId: listPodcasts
+      parameters:
+        - name: limit
+          in: query
+          description: Maximum number of items to return
+          schema:
+            type: integer
+            minimum: 1
+            default: 100
+            maximum: 1000
+          example: 100
+        - name: offset
+          in: query
+          description: Number of items to skip (for pagination)
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+          example: 0
+      responses:
+        '200':
+          description: List of podcasts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PodcastList'
+        '400':
+          description: Invalid query parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    TaskResponse:
+      type: object
+      required:
+        - id
+        - url
+        - status
+        - created_at
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique task identifier
+          example: 550e8400-e29b-41d4-a716-446655440000
+        url:
+          type: string
+          format: uri
+          description: Source Xiaoyuzhou FM URL
+          example: https://www.xiaoyuzhou.fm/episode/12345678
+        status:
+          type: string
+          enum: [pending, in_progress, completed, failed]
+          description: Current task status
+          example: in_progress
+        created_at:
+          type: string
+          format: date-time
+          description: Task submission timestamp
+          example: 2026-02-08T10:30:00Z
+        started_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Download start timestamp
+          example: 2026-02-08T10:30:01Z
+        completed_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Task completion timestamp
+          example: 2026-02-08T10:32:15Z
+        error:
+          type: string
+          nullable: true
+          description: Error message if task failed
+          example: null
+        progress:
+          type: integer
+          minimum: 0
+          maximum: 100
+          nullable: true
+          description: Download progress percentage (0-100)
+          example: 75
+        podcast:
+          $ref: '#/components/schemas/PodcastEpisode'
+
+    PodcastEpisode:
+      type: object
+      required:
+        - title
+        - source_url
+        - audio_path
+        - downloaded_at
+      properties:
+        title:
+          type: string
+          description: Podcast episode title
+          example: "Example Podcast Episode"
+        source_url:
+          type: string
+          format: uri
+          description: Original Xiaoyuzhou FM URL
+          example: https://www.xiaoyuzhou.fm/episode/12345678
+        audio_path:
+          type: string
+          description: Absolute path to audio file
+          example: /home/user/downloads/Example Podcast Episode/podcast.m4a
+        cover_path:
+          type: string
+          nullable: true
+          description: Absolute path to cover image (may be empty)
+          example: /home/user/downloads/Example Podcast Episode/cover.jpg
+        cover_format:
+          type: string
+          enum: [jpg, png, webp]
+          nullable: true
+          description: Cover image format
+          example: jpg
+        shownotes_path:
+          type: string
+          nullable: true
+          description: Absolute path to show notes file (may be empty)
+          example: /home/user/downloads/Example Podcast Episode/shownotes.txt
+        downloaded_at:
+          type: string
+          format: date-time
+          description: Download completion timestamp
+          example: 2026-02-08T10:32:15Z
+        file_size_mb:
+          type: number
+          format: float
+          minimum: 0
+          nullable: true
+          description: Audio file size in megabytes
+          example: 45.2
+
+    PodcastList:
+      type: object
+      required:
+        - podcasts
+        - total
+        - limit
+        - offset
+      properties:
+        podcasts:
+          type: array
+          description: List of downloaded podcasts
+          items:
+            $ref: '#/components/schemas/PodcastListItem'
+        total:
+          type: integer
+          minimum: 0
+          description: Total number of downloaded podcasts
+          example: 150
+        limit:
+          type: integer
+          minimum: 1
+          description: Maximum number of items returned
+          example: 100
+        offset:
+          type: integer
+          minimum: 0
+          description: Number of items skipped
+          example: 0
+
+    PodcastListItem:
+      type: object
+      required:
+        - title
+        - audio_url
+      properties:
+        title:
+          type: string
+          description: Podcast episode title
+          example: "Example Podcast Episode"
+        audio_url:
+          type: string
+          description: Absolute path to audio file
+          example: /home/user/downloads/Example Podcast Episode/podcast.m4a
+        shownotes:
+          type: string
+          nullable: true
+          description: Show notes content (plain text)
+          example: "This is the show notes content..."
+        cover_image:
+          type: string
+          nullable: true
+          description: Absolute path to cover image
+          example: /home/user/downloads/Example Podcast Episode/cover.jpg
+
+    Error:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: object
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: string
+              description: Machine-readable error code
+              example: INVALID_URL
+            message:
+              type: string
+              description: Human-readable error message
+              example: The provided URL is not valid
+            details:
+              type: string
+              description: Additional error details
+              example: URL must start with http:// or https://
+
+  securitySchemes:
+    # Placeholder for future authentication if needed
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key for authentication (not implemented in current version)
+
+security: []
+# No security required for current version (local/private network only)
+
+# Example responses for documentation
+x-examples:
+  taskSubmitted:
+    summary: Example of a newly submitted task
+    value:
+      id: 550e8400-e29b-41d4-a716-446655440000
+      url: https://www.xiaoyuzhou.fm/episode/12345678
+      status: pending
+      created_at: 2026-02-08T10:30:00Z
+      started_at: null
+      completed_at: null
+      error: null
+      progress: null
+      podcast: null
+
+  taskInProgress:
+    summary: Example of a task in progress
+    value:
+      id: 550e8400-e29b-41d4-a716-446655440000
+      url: https://www.xiaoyuzhou.fm/episode/12345678
+      status: in_progress
+      created_at: 2026-02-08T10:30:00Z
+      started_at: 2026-02-08T10:30:01Z
+      completed_at: null
+      error: null
+      progress: 45
+      podcast: null
+
+  taskCompleted:
+    summary: Example of a completed task
+    value:
+      id: 550e8400-e29b-41d4-a716-446655440000
+      url: https://www.xiaoyuzhou.fm/episode/12345678
+      status: completed
+      created_at: 2026-02-08T10:30:00Z
+      started_at: 2026-02-08T10:30:01Z
+      completed_at: 2026-02-08T10:32:15Z
+      error: null
+      progress: 100
+      podcast:
+        title: Example Podcast Episode
+        source_url: https://www.xiaoyuzhou.fm/episode/12345678
+        audio_path: /home/user/downloads/Example Podcast Episode/podcast.m4a
+        cover_path: /home/user/downloads/Example Podcast Episode/cover.jpg
+        cover_format: jpg
+        shownotes_path: /home/user/downloads/Example Podcast Episode/shownotes.txt
+        downloaded_at: 2026-02-08T10:32:15Z
+        file_size_mb: 45.2
+
+  taskFailed:
+    summary: Example of a failed task
+    value:
+      id: 550e8400-e29b-41d4-a716-446655440000
+      url: https://www.xiaoyuzhou.fm/episode/12345678
+      status: failed
+      created_at: 2026-02-08T10:30:00Z
+      started_at: 2026-02-08T10:30:01Z
+      completed_at: 2026-02-08T10:35:00Z
+      error: Failed after 3 retries: connection timeout
+      progress: null
+      podcast: null

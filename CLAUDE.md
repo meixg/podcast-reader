@@ -1,6 +1,6 @@
 # Podcast Reader Development Guidelines
 
-Auto-generated from feature plans. Last updated: 2026-02-08
+Auto-generated from feature plans. Last updated: 2026-02-08 (Feature 2: Save Cover Images and Show Notes)
 
 ## Active Technologies
 
@@ -12,6 +12,7 @@ Auto-generated from feature plans. Last updated: 2026-02-08
 - **github.com/PuerkitoBio/goquery** (v1.8.1): HTML parsing for web scraping
 - **github.com/urfave/cli/v2** (v2.27.1): CLI framework for command-line tools
 - **github.com/schollz/progressbar/v3** (v3.14.1): Progress bar display for downloads
+- **github.com/fatih/color** (v1.18.0): Colored console output
 
 ### Web Service (Future)
 - **Frontend**: Vue 3 + TypeScript + Vite (planned for web service)
@@ -29,7 +30,9 @@ internal/
 ├── downloader/           # Download logic
 │   ├── downloader.go     # Main download service
 │   ├── url_extractor.go  # HTML parsing and URL extraction
-│   └── progress.go       # Progress tracking
+│   ├── metadata.go       # Episode metadata structures
+│   ├── image_downloader.go   # Cover image download service
+│   └── shownotes_saver.go    # Show notes file writer
 ├── models/               # Data structures
 │   ├── episode.go        # Episode metadata
 │   └── download_session.go
@@ -43,6 +46,10 @@ pkg/
     └── client.go
 
 downloads/                # Default download directory (configurable)
+├── Podcast Title/        # Subdirectory per podcast
+│   ├── podcast.m4a       # Downloaded audio files
+│   ├── cover.jpg         # Downloaded cover images
+│   └── shownotes.txt     # Saved show notes (UTF-8 with BOM)
 
 # Web Service (Future - Planned Architecture)
 backend/
@@ -150,24 +157,18 @@ go mod tidy
 // from Xiaoyuzhou FM with progress tracking and retry logic.
 package downloader
 
-// URLExtractor defines the interface for extracting audio URLs from web pages.
+// URLExtractor defines the interface for extracting metadata from podcast pages.
 type URLExtractor interface {
-    // ExtractURL fetches the episode page and extracts the direct audio file URL.
-    //
-    // Parameters:
-    //   ctx - Context for cancellation and timeout
-    //   pageURL - The episode page URL to scrape
-    //
-    // Returns:
-    //   string - The direct audio file URL (.m4a)
-    //   string - The episode title for filename generation
-    //   error - Err if page cannot be fetched or audio URL not found
-    ExtractURL(ctx context.Context, pageURL string) (audioURL string, title string, err error)
-}
-
-// ExtractURL implements the URLExtractor interface using goquery for HTML parsing.
-func (e *HTMLExtractor) ExtractURL(ctx context.Context, pageURL string) (string, string, error) {
-    // Implementation...
+	// ExtractURL fetches the episode page and extracts metadata.
+	//
+	// Parameters:
+	//   ctx - Context for cancellation and timeout
+	//   pageURL - The episode page URL to scrape
+	//
+	// Returns:
+	//   *EpisodeMetadata - Contains audio URL, cover URL, show notes, title, etc.
+	//   error - Err if page cannot be fetched or required data not found
+	ExtractURL(ctx context.Context, pageURL string) (*EpisodeMetadata, error)
 }
 ```
 
@@ -177,38 +178,40 @@ func (e *HTMLExtractor) ExtractURL(ctx context.Context, pageURL string) (string,
 - Mock external dependencies (HTTP calls, file I/O)
 - Use `t.Run()` for subtests
 
-**Example**:
-```go
-func TestSanitizeFilename(t *testing.T) {
-    tests := []struct {
-        name     string
-        input    string
-        expected string
-    }{
-        {
-            name:     "removes invalid characters",
-            input:    "file<>name",
-            expected: "file__name",
-        },
-        {
-            name:     "truncates long names",
-            input:    string(make([]byte, 250)),
-            expected: string(make([]byte, 200)),
-        },
-    }
-
-    for _, tt := range tests {
-        t.Run(tt.name, func(t *testing.T) {
-            result := sanitizeFilename(tt.input)
-            if result != tt.expected {
-                t.Errorf("sanitizeFilename() = %v, want %v", result, tt.expected)
-            }
-        })
-    }
-}
-```
-
 ## Recent Changes
+
+### Feature 2: Save Cover Images and Show Notes (2026-02-08)
+**What it added**:
+- Automatic cover image download alongside podcast audio
+- Show notes extraction and plain text file generation
+- Multi-fallback HTML extraction strategy for robustness
+- UTF-8 with BOM encoding for international character support
+- Graceful degradation (audio download continues even if cover/show notes fail)
+- Podcast subdirectories with simplified filenames (podcast.m4a, cover.jpg, shownotes.txt)
+
+**Technologies introduced**:
+- github.com/fatih/color (v1.18.0) for colored console output
+- No other new external dependencies (uses existing goquery)
+- UTF-8 BOM encoding for cross-platform text file compatibility
+- Magic byte detection for image format validation
+
+**Architectural decisions**:
+- Extended URLExtractor interface to return EpisodeMetadata struct (breaking change)
+- New services: ImageDownloader, ShowNotesSaver
+- Multi-fallback strategy for HTML element selection (aria-label → semantic selectors)
+- HTML to plain text conversion with structure preservation (links, lists, headers)
+- Image format preservation (JPEG, PNG, WebP) with format detection via magic bytes
+- File organization: Podcast title subdirectories with simplified asset filenames
+
+**Key implementation details**:
+- Cover image extraction: `.avater-container` first image (Xiaoyuzhou FM specific)
+- Show notes extraction: `<section aria-label="节目show notes">` → aria-label containing "show notes" → semantic selectors
+- Image validation: Magic byte detection (JPEG: FF D8 FF, PNG: 89 50 4E 47, WebP: RIFF....WEBP)
+- Text formatting: Links → "text (URL: url)", lists → bullets/numbers, headers → uppercase with underline
+- Error handling: Detailed warning messages with specific reasons, no failure for non-critical assets
+- HTTP timeouts: 1 hour for audio, 2 minutes for images
+
+---
 
 ### Feature 1: Podcast Audio Downloader (2026-02-08)
 **What it added**:

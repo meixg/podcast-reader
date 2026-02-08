@@ -49,6 +49,7 @@ downloads/*.webp
 downloads/*.txt
 !downloads/.gitkeep
 backend/downloads/*
+backend/server
 
 # Environment
 .env

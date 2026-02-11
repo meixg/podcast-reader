@@ -57,6 +57,7 @@ backend/server
 
 # Logs
 *.log
+output/
 
 # Metadata files
 downloads/*

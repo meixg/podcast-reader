@@ -13,13 +13,15 @@ import (
 
 // Scanner scans the downloads directory for podcast episodes
 type Scanner struct {
-	downloadsDir string
+	downloadsDir    string
+	metadataScanner *MetadataScanner
 }
 
 // NewScanner creates a new scanner instance
 func NewScanner(downloadsDir string) *Scanner {
 	return &Scanner{
-		downloadsDir: downloadsDir,
+		downloadsDir:    downloadsDir,
+		metadataScanner: NewMetadataScanner(),
 	}
 }
 
@@ -73,10 +75,14 @@ func (s *Scanner) parseEpisode(audioPath string, info os.FileInfo) (models.Episo
 	title := strings.TrimSuffix(filepath.Base(audioPath), filepath.Ext(audioPath))
 
 	// Look for cover image
-	coverPath := s.findCoverImage(filepath.Dir(audioPath))
+	dir := filepath.Dir(audioPath)
+	coverPath := s.findCoverImage(dir)
 
 	// Look for show notes
-	showNotes := s.readShowNotes(filepath.Dir(audioPath))
+	showNotes := s.readShowNotes(dir)
+
+	// Read metadata if available
+	metadata, _ := s.metadataScanner.ReadMetadata(dir)
 
 	episode := models.Episode{
 		ID:             id,
@@ -88,6 +94,7 @@ func (s *Scanner) parseEpisode(audioPath string, info os.FileInfo) (models.Episo
 		ShowNotes:      showNotes,
 		FilePath:       audioPath,
 		CoverImagePath: coverPath,
+		Metadata:       metadata,
 	}
 
 	return episode, nil

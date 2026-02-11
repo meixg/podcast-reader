@@ -8,7 +8,8 @@
         <h3 class="text-lg font-semibold text-gray-900 truncate">{{ episode.title }}</h3>
         <p class="text-sm text-gray-600 mt-1">{{ episode.podcastName }}</p>
         <div class="flex items-center gap-4 mt-2 text-sm text-gray-500">
-          <span>{{ episode.duration }}</span>
+          <span>{{ formatDuration(episode) }}</span>
+          <span>{{ formatPublishTime(episode) }}</span>
           <span>{{ formatFileSize(episode.fileSize) }}</span>
           <span>{{ formatDate(episode.downloadDate) }}</span>
         </div>
@@ -39,5 +40,21 @@ function formatFileSize(bytes: number): string {
 
 function formatDate(date: string): string {
   return new Date(date).toLocaleDateString()
+}
+
+function formatDuration(episode: Episode): string {
+  // Use metadata duration if available, otherwise fall back to episode duration
+  if (episode.metadata?.duration) {
+    return episode.metadata.duration
+  }
+  return episode.duration || '--'
+}
+
+function formatPublishTime(episode: Episode): string {
+  // Use metadata publish_time if available
+  if (episode.metadata?.publish_time) {
+    return episode.metadata.publish_time
+  }
+  return '--'
 }
 </script>

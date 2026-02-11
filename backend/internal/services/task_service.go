@@ -144,3 +144,17 @@ func (s *TaskService) MarkFailed(id string, errorMsg string) error {
 	task.ErrorMessage = errorMsg
 	return nil
 }
+
+// UpdateTaskStatus updates the status of a task
+func (s *TaskService) UpdateTaskStatus(id string, status models.TaskStatus) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	task, exists := s.tasks[id]
+	if !exists {
+		return fmt.Errorf("task not found")
+	}
+
+	task.Status = status
+	return nil
+}

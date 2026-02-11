@@ -6,6 +6,8 @@ Auto-generated from feature plans. Last updated: 2026-02-08 (Feature 2: Save Cov
 - Go 1.25.5 + `net/http` (standard library), `github.com/PuerkitoBio/goquery` (existing), `github.com/fatih/color` (existing), existing downloader packages (3-podcast-api-server)
 - In-memory for active tasks (lost on restart), filesystem for downloaded podcasts (scanned on startup), no database (3-podcast-api-server)
 - File-based (existing downloads directory, in-memory task queue) (004-frontend-web-app)
+- Go 1.21+ (existing project standard) (005-metadata-extraction)
+- File-based (existing downloads directory structure) (005-metadata-extraction)
 
 ### Backend
 - **Go 1.21+**: Primary language for CLI tools and web service backend
@@ -93,8 +95,18 @@ frontend/
 
 ### Go Development
 ```bash
-# Build CLI tool
-go build -o podcast-downloader cmd/podcast-downloader/main.go
+# Using Make (recommended for server operations)
+cd backend
+make build              # Build server binary
+make run                 # Run server directly
+make restart            # Restart server (kill, rebuild, and start in background)
+make clean              # Clean build artifacts and logs
+make test               # Run tests
+make fmt                # Format code
+make lint               # Run linter
+
+# Manual build commands (if Makefile not available)
+go build -o podcast-server cmd/podcast-downloader/main.go
 
 # Run tests
 go test ./...
@@ -114,6 +126,19 @@ go vet ./...
 
 # Install dependencies
 go mod tidy
+```
+
+### Server Management
+```bash
+# IMPORTANT: Always use Makefile to restart server
+cd backend
+make restart
+
+# View server logs
+tail -f backend/output/server.log
+
+# Check if server is running
+ps aux | grep podcast-server | grep -v grep
 ```
 
 ### CLI Tool Usage
@@ -187,12 +212,12 @@ type URLExtractor interface {
 - Use `t.Run()` for subtests
 
 ## Recent Changes
+- 005-metadata-extraction: Added Go 1.21+ (existing project standard)
 - 004-frontend-web-app: Added File-based (existing downloads directory, in-memory task queue)
 - 3-podcast-api-server: Added Go 1.25.5 + `net/http` (standard library), `github.com/PuerkitoBio/goquery` (existing), `github.com/fatih/color` (existing), existing downloader packages
 
 ### Feature 2: Save Cover Images and Show Notes (2026-02-08)
 **What it added**:
-- Automatic cover image download alongside podcast audio
 
 **Technologies introduced**:
 

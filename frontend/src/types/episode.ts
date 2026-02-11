@@ -1,3 +1,11 @@
+export interface PodcastMetadata {
+  duration?: string
+  publish_time?: string
+  episode_title?: string
+  podcast_name?: string
+  extracted_at: string
+}
+
 export interface Episode {
   id: string
   title: string
@@ -8,6 +16,7 @@ export interface Episode {
   showNotes: string
   filePath: string
   coverImagePath?: string
+  metadata?: PodcastMetadata
 }
 
 export interface PaginatedEpisodes {

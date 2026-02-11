@@ -1,0 +1,208 @@
+openapi: 3.0.3
+info:
+  title: Podcast Metadata API
+  description: API for podcast metadata extraction and display
+  version: 1.0.0
+
+paths:
+  /api/podcasts:
+    get:
+      summary: List all podcast episodes with metadata
+      description: Returns a list of all downloaded podcast episodes including their metadata
+      operationId: listPodcasts
+      responses:
+        '200':
+          description: Successful response with episode list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EpisodeListResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/podcasts/download:
+    post:
+      summary: Download a podcast episode with metadata extraction
+      description: Downloads podcast audio and extracts metadata from the page
+      operationId: downloadPodcast
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DownloadRequest'
+      responses:
+        '202':
+          description: Download task accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DownloadTaskResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/podcasts/task/{taskId}:
+    get:
+      summary: Get download task status
+      description: Returns the current status of a download task including metadata extraction progress
+      operationId: getTaskStatus
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Task status retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DownloadTaskResponse'
+        '404':
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    EpisodeListResponse:
+      type: object
+      required:
+        - episodes
+        - total
+      properties:
+        episodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Episode'
+        total:
+          type: integer
+          description: Total number of episodes
+
+    Episode:
+      type: object
+      required:
+        - title
+        - podcast_name
+        - file_path
+      properties:
+        title:
+          type: string
+          description: Episode title
+        podcast_name:
+          type: string
+          description: Name of the podcast series
+        file_path:
+          type: string
+          description: Absolute path to the audio file
+        cover_path:
+          type: string
+          nullable: true
+          description: Path to cover image if exists
+        shownotes_path:
+          type: string
+          nullable: true
+          description: Path to shownotes file if exists
+        metadata:
+          $ref: '#/components/schemas/PodcastMetadata'
+
+    PodcastMetadata:
+      type: object
+      required:
+        - extracted_at
+      properties:
+        duration:
+          type: string
+          nullable: true
+          description: Duration as displayed on page (e.g., "231分钟", "1小时15分钟")
+        publish_time:
+          type: string
+          nullable: true
+          description: Relative publish time (e.g., "刚刚发布", "2个月前")
+        episode_title:
+          type: string
+          nullable: true
+          description: Title of the episode from source page
+        podcast_name:
+          type: string
+          nullable: true
+          description: Name of the podcast series from source page
+        extracted_at:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when metadata was extracted
+
+    DownloadRequest:
+      type: object
+      required:
+        - url
+      properties:
+        url:
+          type: string
+          format: uri
+          description: URL of the podcast episode page
+        overwrite:
+          type: boolean
+          default: false
+          description: Whether to overwrite existing files
+
+    DownloadTaskResponse:
+      type: object
+      required:
+        - task_id
+        - status
+      properties:
+        task_id:
+          type: string
+          description: Unique task identifier
+        status:
+          type: string
+          enum: [pending, downloading, extracting_metadata, completed, failed]
+          description: Current task status
+        audio_path:
+          type: string
+          nullable: true
+          description: Path to downloaded audio file (when completed)
+        metadata:
+          $ref: '#/components/schemas/PodcastMetadata'
+        error:
+          type: string
+          nullable: true
+          description: Error message if task failed
+        created_at:
+          type: string
+          format: date-time
+          description: Task creation timestamp
+        updated_at:
+          type: string
+          format: date-time
+          description: Last update timestamp
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: Error message
+        code:
+          type: string
+          description: Error code for client handling

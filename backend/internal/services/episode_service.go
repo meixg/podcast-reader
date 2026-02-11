@@ -11,13 +11,15 @@ import (
 
 // EpisodeService manages episode operations
 type EpisodeService struct {
-	scanner *scanner.Scanner
+	scanner         *scanner.Scanner
+	metadataScanner *scanner.MetadataScanner
 }
 
 // NewEpisodeService creates a new episode service
-func NewEpisodeService(scanner *scanner.Scanner) *EpisodeService {
+func NewEpisodeService(s *scanner.Scanner) *EpisodeService {
 	return &EpisodeService{
-		scanner: scanner,
+		scanner:         s,
+		metadataScanner: scanner.NewMetadataScanner(),
 	}
 }
 

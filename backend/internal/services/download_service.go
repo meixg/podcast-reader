@@ -12,16 +12,19 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/meixg/podcast-reader/backend/internal/downloader"
+	"github.com/meixg/podcast-reader/backend/internal/models"
 )
 
 // DownloadService handles the complete podcast download workflow
 type DownloadService struct {
-	downloadsDir    string
-	httpClient      *http.Client
-	urlExtractor    downloader.URLExtractor
-	fileDownloader  downloader.FileDownloader
-	imageDownloader downloader.ImageDownloader
-	taskService     *TaskService
+	downloadsDir        string
+	httpClient          *http.Client
+	urlExtractor        downloader.URLExtractor
+	fileDownloader      downloader.FileDownloader
+	imageDownloader     downloader.ImageDownloader
+	metadataExtractor   *downloader.MetadataExtractor
+	metadataWriter      *downloader.MetadataWriter
+	taskService         *TaskService
 }
 
 // NewDownloadService creates a new download service
@@ -34,12 +37,14 @@ func NewDownloadService(downloadsDir string, taskService *TaskService) *Download
 	httpClientWrapper := &httpClientDoer{client: httpClient}
 
 	return &DownloadService{
-		downloadsDir:    downloadsDir,
-		httpClient:      httpClient,
-		urlExtractor:    downloader.NewHTMLExtractor(httpClientWrapper),
-		fileDownloader:  downloader.NewHTTPDownloader(httpClient, false),
-		imageDownloader: downloader.NewHTTPImageDownloader(httpClient, 10*1024*1024), // 10MB max
-		taskService:     taskService,
+		downloadsDir:      downloadsDir,
+		httpClient:        httpClient,
+		urlExtractor:      downloader.NewHTMLExtractor(httpClientWrapper),
+		fileDownloader:    downloader.NewHTTPDownloader(httpClient, false),
+		imageDownloader:   downloader.NewHTTPImageDownloader(httpClient, 10*1024*1024), // 10MB max
+		metadataExtractor: downloader.NewMetadataExtractor(httpClientWrapper),
+		metadataWriter:    downloader.NewMetadataWriter(),
+		taskService:       taskService,
 	}
 }
 
@@ -102,16 +107,25 @@ func (s *DownloadService) ExecuteDownload(ctx context.Context, taskID, url strin
 	}
 	s.taskService.UpdateProgress(taskID, 95)
 
-	// Step 5: Save show notes (98% progress)
+	// Step 5: Save show notes (95% progress)
 	if metadata.ShowNotes != "" {
 		shownotesPath := filepath.Join(podcastDir, "shownotes.txt")
 		if err := s.saveShowNotes(metadata.ShowNotes, shownotesPath); err != nil {
 			log.Printf("Warning: Failed to save show notes: %v", err)
 		}
 	}
+	s.taskService.UpdateProgress(taskID, 95)
+
+	// Step 6: Extract and save metadata (98% progress)
+	// Continue even if metadata extraction fails
+	s.taskService.UpdateTaskStatus(taskID, "extracting_metadata")
+	if err := s.extractAndSaveMetadata(ctx, url, podcastDir); err != nil {
+		log.Printf("Warning: Failed to extract metadata: %v", err)
+		// Continue - metadata extraction failure doesn't block download
+	}
 	s.taskService.UpdateProgress(taskID, 98)
 
-	// Step 6: Mark as completed (100% progress)
+	// Step 7: Mark as completed (100% progress)
 	s.taskService.MarkCompleted(taskID, "")
 	s.taskService.UpdateProgress(taskID, 100)
 
@@ -278,4 +292,23 @@ func convertHTMLToText(html string) string {
 	}
 
 	return strings.Join(cleanedLines, "\n\n")
+}
+
+// extractAndSaveMetadata extracts metadata from the page and saves it to .metadata.json
+func (s *DownloadService) extractAndSaveMetadata(ctx context.Context, pageURL, podcastDir string) error {
+	// Extract metadata from page
+	metadata, err := s.metadataExtractor.ExtractMetadata(ctx, pageURL)
+	if err != nil {
+		// Log warning but don't fail - write empty metadata file
+		log.Printf("Warning: Metadata extraction failed for %s: %v", pageURL, err)
+		metadata = models.NewPodcastMetadata()
+	}
+
+	// Write metadata file (even if empty)
+	if err := s.metadataWriter.WriteMetadata(podcastDir, metadata); err != nil {
+		return fmt.Errorf("failed to write metadata: %w", err)
+	}
+
+	log.Printf("Metadata saved: %s/.metadata.json", podcastDir)
+	return nil
 }

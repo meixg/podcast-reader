@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 
 	"github.com/meixg/podcast-reader/backend/internal/handlers"
 	"github.com/meixg/podcast-reader/backend/internal/services"
@@ -17,6 +18,20 @@ func main() {
 	if downloadsDir == "" {
 		// Use relative path to downloads directory
 		downloadsDir = "downloads"
+	}
+
+	// Setup logging to output directory
+	outputDir := "output"
+	if err := os.MkdirAll(outputDir, 0755); err != nil {
+		log.Printf("Warning: Failed to create output directory: %v", err)
+	}
+	logFile, err := os.OpenFile(filepath.Join(outputDir, "server.log"), os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+	if err != nil {
+		log.Printf("Warning: Failed to open log file: %v", err)
+	} else {
+		defer logFile.Close()
+		log.SetOutput(logFile)
+		log.SetFlags(log.LstdFlags | log.Lshortfile)
 	}
 
 	// Initialize services

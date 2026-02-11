@@ -6,10 +6,11 @@ import "time"
 type TaskStatus string
 
 const (
-	TaskStatusPending     TaskStatus = "pending"
-	TaskStatusDownloading TaskStatus = "downloading"
-	TaskStatusCompleted   TaskStatus = "completed"
-	TaskStatusFailed      TaskStatus = "failed"
+	TaskStatusPending            TaskStatus = "pending"
+	TaskStatusDownloading        TaskStatus = "downloading"
+	TaskStatusExtractingMetadata TaskStatus = "extracting_metadata"
+	TaskStatusCompleted          TaskStatus = "completed"
+	TaskStatusFailed             TaskStatus = "failed"
 )
 
 // DownloadTask represents a download operation with status tracking

@@ -33,8 +33,7 @@ jobs:
       - name: Build frontend
         working-directory: frontend
         run: |
-          npm install
-          npx vue-tsc --version
+          npm ci
           npm run build
 
       - name: Set up QEMU

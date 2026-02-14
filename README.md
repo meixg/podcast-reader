@@ -1,5 +1,9 @@
 # Podcast Reader
 
+> ⚠️ **注意：这是一个用于实践 AI Coding 的玩具项目，仅供学习和娱乐，不建议在实际生产环境中使用。**
+>
+> ⚠️ **Note: This is a toy project for practicing AI Coding, intended for learning and entertainment purposes only. Not recommended for production use.**
+
 Podcast下载工具和API服务器，支持从小宇宙FM下载播客音频。
 
 Podcast download tool and API server for downloading podcast audio from Xiaoyuzhou FM.

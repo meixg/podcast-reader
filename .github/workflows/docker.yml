@@ -34,7 +34,8 @@ jobs:
         working-directory: frontend
         run: |
           npm ci
-          npm run build
+          export PATH="$PWD/node_modules/.bin:$PATH"
+          vue-tsc && vite build
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3

@@ -34,7 +34,7 @@ jobs:
         working-directory: frontend
         run: |
           ls -la
-          npm install
+          npm ci
           npm run build
 
       - name: Set up QEMU

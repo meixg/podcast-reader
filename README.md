@@ -60,6 +60,16 @@ go build -o podcast-downloader cmd/downloader/main.go
 
 # 编译 API 服务器
 go build -o podcast-server cmd/server/main.go
+
+### 构建 Docker 镜像
+
+```bash
+# 构建镜像
+docker build -t podcast-reader:latest .
+
+# 查看镜像大小
+docker images podcast-reader:latest
+```
 ```
 
 ### 系统要求 (Requirements)

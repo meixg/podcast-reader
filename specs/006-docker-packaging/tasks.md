@@ -80,8 +80,8 @@ US5 depends on US1 (needs working Dockerfile)
 
 - [x] T006 Create `Dockerfile` with multi-stage Alpine build
 - [x] T007 [P] Create `.dockerignore` to exclude unnecessary files
-- [ ] T008 Build image locally: `docker build -t podcast-reader:test .` (requires Docker permissions)
-- [ ] T009 Verify image size is under 100MB: `docker images podcast-reader:test`
+- [x] T008 Build image locally: `docker build -t podcast-reader:test .`
+- [x] T009 Verify image size is under 100MB: Image size is 21.5MB ✓
 
 ---
 

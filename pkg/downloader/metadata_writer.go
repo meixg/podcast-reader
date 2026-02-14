@@ -5,8 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/meixg/podcast-reader/backend/internal/models"
-	"github.com/meixg/podcast-reader/backend/pkg/scanner"
+	"github.com/meixg/podcast-reader/pkg/models"
+	"github.com/meixg/podcast-reader/pkg/scanner"
 )
 
 // MetadataWriter handles writing metadata to .metadata.json files

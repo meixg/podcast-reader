@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/meixg/podcast-reader/backend/internal/models"
+	"github.com/meixg/podcast-reader/pkg/models"
 )
 
 const metadataFileName = ".metadata.json"

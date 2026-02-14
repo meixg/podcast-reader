@@ -11,8 +11,8 @@ import (
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/meixg/podcast-reader/backend/internal/downloader"
-	"github.com/meixg/podcast-reader/backend/internal/models"
+	"github.com/meixg/podcast-reader/pkg/downloader"
+	"github.com/meixg/podcast-reader/pkg/models"
 )
 
 // DownloadService handles the complete podcast download workflow

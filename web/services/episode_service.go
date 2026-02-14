@@ -5,8 +5,8 @@ import (
 	"math"
 	"sort"
 
-	"github.com/meixg/podcast-reader/backend/internal/models"
-	"github.com/meixg/podcast-reader/backend/pkg/scanner"
+	"github.com/meixg/podcast-reader/pkg/models"
+	"github.com/meixg/podcast-reader/pkg/scanner"
 )
 
 // EpisodeService manages episode operations
@@ -45,7 +45,7 @@ func (s *EpisodeService) GetEpisodes(page, pageSize int) (*models.PaginatedEpiso
 
 	if start >= total {
 		return &models.PaginatedEpisodes{
-			Episodes:   []models.Episode{},
+			Episodes:   []models.DownloadedEpisode{},
 			Total:      total,
 			Page:       page,
 			PageSize:   pageSize,

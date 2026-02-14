@@ -17,12 +17,12 @@
     "vue-router": "^4.2.0"
   },
   "devDependencies": {
-    "@types/estree": "^1.0.0",
-    "@types/json-schema": "^7.0.0",
-    "@types/node": "^20.0.0",
-    "@types/semver": "^7.5.0",
+    "@types/estree": "^1.0.8",
+    "@types/json-schema": "^7.0.15",
+    "@types/node": "^20.19.33",
+    "@types/semver": "^7.7.1",
     "@types/sinonjs__fake-timers": "^8.1.0",
-    "@types/sizzle": "^2.3.0",
+    "@types/sizzle": "^2.3.10",
     "@types/yauzl": "^2.10.0",
     "@typescript-eslint/eslint-plugin": "^6.19.0",
     "@typescript-eslint/parser": "^6.19.0",

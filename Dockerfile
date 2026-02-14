@@ -1,3 +1,20 @@
+# Build frontend stage
+FROM node:20-alpine AS frontend-builder
+
+WORKDIR /app/frontend
+
+# Copy frontend package files
+COPY frontend/package*.json ./
+
+# Install dependencies with legacy peer deps to avoid conflicts
+RUN npm install --legacy-peer-deps
+
+# Copy frontend source
+COPY frontend/ ./
+
+# Build frontend
+RUN npm run build
+
 # Build Go backend stage
 FROM golang:1.25-alpine AS backend-builder
 
@@ -29,8 +46,8 @@ WORKDIR /app
 # Copy binary from builder
 COPY --from=backend-builder /app/server ./
 
-# Copy frontend build files (pre-built from local)
-COPY frontend/dist ./frontend/dist
+# Copy frontend build files from frontend-builder
+COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
 
 # Create downloads directory
 RUN mkdir -p /app/downloads

@@ -7,9 +7,11 @@
 specs/
 examples/
 
-# Frontend (built separately)
+# Frontend
 frontend/node_modules/
-# frontend/dist/ - Include dist for Docker image
+frontend/.vite/
+frontend/coverage/
+# Frontend source and dist needed for Docker build
 
 # Go build artifacts
 *.exe

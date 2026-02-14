@@ -1,4 +1,4 @@
-.PHONY: all build test run-server run-cli clean fmt vet lint help
+.PHONY: all build test run-server run-server-watch run-server-dev run-cli clean fmt vet lint help
 
 # Variables
 BINARY_SERVER=podcast-server
@@ -37,6 +37,31 @@ test-cover:
 run-server: build-server
 	./$(BUILD_DIR)/$(BINARY_SERVER) -verbose
 
+## run-server-watch: Run the API server with auto-reload on file changes
+run-server-watch:
+	@AIR_BIN="$(shell go env GOPATH)/bin/air"; \
+	if [ ! -f "$$AIR_BIN" ]; then \
+		echo "Installing air..."; \
+		go install github.com/air-verse/air@latest; \
+	fi; \
+	"$$AIR_BIN"
+
+## run-server-dev: Run the API server with simple auto-restart (no external tools required)
+run-server-dev:
+	@echo "Starting server with auto-restart..."
+	@while true; do \
+		echo "[$(shell date '+%H:%M:%S')] Building server..."; \
+		$(GO) build $(GOFLAGS) -o $(BUILD_DIR)/$(BINARY_SERVER) ./cmd/server && \
+		echo "[$(shell date '+%H:%M:%S')] Starting server..." && \
+		./$(BUILD_DIR)/$(BINARY_SERVER) -verbose & \
+		SERVER_PID=$$!; \
+		inotifywait -qq -e modify -r --include '\.go$$' . 2>/dev/null || \
+		(fstat -q . 2>/dev/null || sleep 5); \
+		kill $$SERVER_PID 2>/dev/null; \
+		echo "[$(shell date '+%H:%M:%S')] Server stopped, restarting..."; \
+		sleep 1; \
+	done
+
 ## run-cli: Run the CLI tool (requires URL argument)
 run-cli: build-cli
 	@echo "Usage: make run-cli URL=<url>"
@@ -46,7 +71,8 @@ run-cli: build-cli
 clean:
 	@echo "Cleaning..."
 	rm -rf $(BUILD_DIR)
-	rm -f coverage.out coverage.html
+	rm -rf tmp
+	rm -f coverage.out coverage.html build-errors.log
 
 ## fmt: Format code
 fmt:

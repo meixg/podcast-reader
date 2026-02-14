@@ -314,6 +314,9 @@ func (s *DownloadService) extractAndSaveMetadata(ctx context.Context, pageURL, p
 		metadata = models.NewPodcastMetadata()
 	}
 
+	// Save the original page URL
+	metadata.SourceURL = pageURL
+
 	// Write metadata file (even if empty)
 	if err := s.metadataWriter.WriteMetadata(podcastDir, metadata); err != nil {
 		return fmt.Errorf("failed to write metadata: %w", err)

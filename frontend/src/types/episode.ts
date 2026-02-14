@@ -3,6 +3,7 @@ export interface PodcastMetadata {
   publish_time?: string
   episode_title?: string
   podcast_name?: string
+  source_url?: string
   extracted_at: string
 }
 
@@ -16,6 +17,7 @@ export interface Episode {
   showNotes: string
   filePath: string
   coverImagePath?: string
+  sourceUrl?: string
   metadata?: PodcastMetadata
 }
 

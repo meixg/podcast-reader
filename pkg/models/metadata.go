@@ -8,6 +8,7 @@ type PodcastMetadata struct {
 	PublishTime  string    `json:"publish_time"`  // Relative publish time (e.g., "刚刚发布", "2个月前")
 	EpisodeTitle string    `json:"episode_title"` // Title of the episode
 	PodcastName  string    `json:"podcast_name"`  // Name of the podcast series
+	SourceURL    string    `json:"source_url"`    // Original page URL (e.g., https://www.xiaoyuzhoufm.com/episode/...)
 	ExtractedAt  time.Time `json:"extracted_at"`  // Timestamp when metadata was extracted
 }
 

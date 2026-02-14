@@ -13,6 +13,7 @@ type DownloadedEpisode struct {
 	ShowNotes      string           `json:"showNotes"`
 	FilePath       string           `json:"filePath"`
 	CoverImagePath string           `json:"coverImagePath,omitempty"`
+	SourceURL      string           `json:"sourceUrl,omitempty"`
 	Metadata       *PodcastMetadata `json:"metadata,omitempty"`
 }
 

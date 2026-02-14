@@ -97,6 +97,19 @@ func (s *Scanner) parseEpisode(audioPath string, info os.FileInfo) (models.Downl
 		Metadata:       metadata,
 	}
 
+	// Use metadata episode title if available
+	if metadata != nil && metadata.EpisodeTitle != "" {
+		episode.Title = metadata.EpisodeTitle
+	}
+	// Use metadata podcast name if available
+	if metadata != nil && metadata.PodcastName != "" {
+		episode.PodcastName = metadata.PodcastName
+	}
+	// Use metadata source URL if available
+	if metadata != nil && metadata.SourceURL != "" {
+		episode.SourceURL = metadata.SourceURL
+	}
+
 	return episode, nil
 }
 

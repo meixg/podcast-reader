@@ -1,0 +1,57 @@
+openapi: 3.0.3
+info:
+  title: Podcast Reader Health API
+  description: Health check endpoint for container orchestration
+  version: 1.0.0
+
+paths:
+  /health:
+    get:
+      summary: Health check endpoint
+      description: |
+        Returns 200 OK when the application is healthy and ready to serve requests.
+        Used by Docker HEALTHCHECK and container orchestrators (Kubernetes, etc.)
+      operationId: getHealth
+      tags:
+        - Health
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                  - timestamp
+                properties:
+                  status:
+                    type: string
+                    enum:
+                      - healthy
+                    example: "healthy"
+                    description: Current health status of the service
+                  timestamp:
+                    type: string
+                    format: date-time
+                    example: "2026-02-14T10:30:00Z"
+                    description: UTC timestamp when health check was performed
+        '503':
+          description: Service is unhealthy or starting up
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                  - timestamp
+                properties:
+                  status:
+                    type: string
+                    enum:
+                      - unhealthy
+                      - starting
+                    example: "unhealthy"
+                  timestamp:
+                    type: string
+                    format: date-time

@@ -1,0 +1,51 @@
+# Git
+.git
+.gitignore
+
+# Documentation
+*.md
+specs/
+examples/
+
+# Frontend
+frontend/node_modules/
+frontend/.vite/
+frontend/coverage/
+# Frontend source and dist needed for Docker build
+
+# Go build artifacts
+*.exe
+*.test
+*.out
+vendor/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+output/
+
+# Testing
+coverage/
+*.cover
+
+# Docker itself
+Dockerfile*
+.dockerignore
+docker-compose*.yml
+
+# Downloads (mounted as volume)
+downloads/*
+!downloads/.gitkeep
+
+# Build artifacts
+build/
+dist/

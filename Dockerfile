@@ -1,5 +1,5 @@
-# Build stage
-FROM golang:1.25-alpine AS builder
+# Build Go backend stage
+FROM golang:1.25-alpine AS backend-builder
 
 # Install git and ca-certificates for fetching dependencies
 RUN apk add --no-cache git ca-certificates
@@ -27,7 +27,10 @@ RUN apk --no-cache add ca-certificates wget
 WORKDIR /app
 
 # Copy binary from builder
-COPY --from=builder /app/server ./
+COPY --from=backend-builder /app/server ./
+
+# Copy frontend build files (pre-built from local)
+COPY frontend/dist ./frontend/dist
 
 # Create downloads directory
 RUN mkdir -p /app/downloads

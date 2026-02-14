@@ -9,7 +9,7 @@ examples/
 
 # Frontend (built separately)
 frontend/node_modules/
-frontend/dist/
+# frontend/dist/ - Include dist for Docker image
 
 # Go build artifacts
 *.exe

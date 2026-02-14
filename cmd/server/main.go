@@ -60,9 +60,30 @@ func main() {
 	// Task routes
 	mux.HandleFunc("/api/tasks", taskHandler.HandleTasks)
 
-	// Static file server for downloads (images, audio files)
-	fileServer := http.FileServer(http.Dir("."))
-	mux.Handle("/static/", http.StripPrefix("/static/", fileServer))
+	// Static file server for frontend (SPA support - serve index.html for all non-API routes)
+	frontendFS := http.Dir("./frontend/dist")
+	frontendServer := http.FileServer(frontendFS)
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		// Check if the file exists in frontend dist
+		path := r.URL.Path
+		if path == "/" {
+			// Serve index.html for root path
+			http.ServeFile(w, r, "./frontend/dist/index.html")
+			return
+		}
+
+		// Try to serve the file directly
+		f, err := frontendFS.Open(path)
+		if err != nil {
+			// File not found, serve index.html for SPA routing
+			http.ServeFile(w, r, "./frontend/dist/index.html")
+			return
+		}
+		f.Close()
+
+		// File exists, serve it
+		frontendServer.ServeHTTP(w, r)
+	})
 
 	// Wrap with CORS middleware
 	handler := corsMiddleware(mux)

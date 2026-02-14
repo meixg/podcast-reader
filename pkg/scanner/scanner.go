@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/meixg/podcast-reader/backend/internal/models"
+	"github.com/meixg/podcast-reader/pkg/models"
 )
 
 // Scanner scans the downloads directory for podcast episodes
@@ -26,8 +26,8 @@ func NewScanner(downloadsDir string) *Scanner {
 }
 
 // ScanEpisodes scans the downloads directory and returns all episodes
-func (s *Scanner) ScanEpisodes() ([]models.Episode, error) {
-	var episodes []models.Episode
+func (s *Scanner) ScanEpisodes() ([]models.DownloadedEpisode, error) {
+	var episodes []models.DownloadedEpisode
 
 	err := filepath.Walk(s.downloadsDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -64,7 +64,7 @@ func (s *Scanner) ScanEpisodes() ([]models.Episode, error) {
 }
 
 // parseEpisode extracts episode metadata from a file
-func (s *Scanner) parseEpisode(audioPath string, info os.FileInfo) (models.Episode, error) {
+func (s *Scanner) parseEpisode(audioPath string, info os.FileInfo) (models.DownloadedEpisode, error) {
 	// Generate ID from file path
 	id := s.generateID(audioPath)
 
@@ -84,7 +84,7 @@ func (s *Scanner) parseEpisode(audioPath string, info os.FileInfo) (models.Episo
 	// Read metadata if available
 	metadata, _ := s.metadataScanner.ReadMetadata(dir)
 
-	episode := models.Episode{
+	episode := models.DownloadedEpisode{
 		ID:             id,
 		Title:          title,
 		PodcastName:    podcastName,

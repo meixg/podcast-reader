@@ -8,7 +8,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/meixg/podcast-reader/internal/validator"
+	"github.com/meixg/podcast-reader/pkg/validator"
 )
 
 // Manager manages download tasks and coordinates with the downloader

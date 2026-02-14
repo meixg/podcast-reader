@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/meixg/podcast-reader/internal/downloader"
+	"github.com/meixg/podcast-reader/pkg/downloader"
 )
 
 // DownloadService handles the complete download workflow for podcast episodes.

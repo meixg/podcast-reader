@@ -13,8 +13,8 @@ import (
 
 	"github.com/fatih/color"
 	"github.com/meixg/podcast-reader/internal/config"
-	"github.com/meixg/podcast-reader/internal/downloader"
-	"github.com/meixg/podcast-reader/internal/validator"
+	"github.com/meixg/podcast-reader/pkg/downloader"
+	"github.com/meixg/podcast-reader/pkg/validator"
 	"github.com/schollz/progressbar/v3"
 	"github.com/urfave/cli/v2"
 )

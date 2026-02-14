@@ -7,9 +7,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/meixg/podcast-reader/backend/internal/handlers"
-	"github.com/meixg/podcast-reader/backend/internal/services"
-	"github.com/meixg/podcast-reader/backend/pkg/scanner"
+	"github.com/meixg/podcast-reader/pkg/scanner"
+	"github.com/meixg/podcast-reader/web/handlers"
+	"github.com/meixg/podcast-reader/web/services"
 )
 
 func main() {

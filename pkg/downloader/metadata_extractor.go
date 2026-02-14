@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/meixg/podcast-reader/backend/internal/models"
+	"github.com/meixg/podcast-reader/pkg/models"
 )
 
 // MetadataExtractor extracts podcast metadata (duration and publish time) from HTML pages

@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/meixg/podcast-reader/backend/internal/models"
-	"github.com/meixg/podcast-reader/backend/internal/services"
+	"github.com/meixg/podcast-reader/pkg/models"
+	"github.com/meixg/podcast-reader/web/services"
 )
 
 // TaskHandler handles task-related HTTP requests

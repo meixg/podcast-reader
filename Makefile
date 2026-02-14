@@ -16,13 +16,13 @@ build: build-cli build-server
 build-cli:
 	@echo "Building CLI tool..."
 	@mkdir -p $(BUILD_DIR)
-	$(GO) build $(GOFLAGS) -o $(BUILD_DIR)/$(BINARY_CLI) ./cmd/podcast-downloader
+	$(GO) build $(GOFLAGS) -o $(BUILD_DIR)/$(BINARY_CLI) ./cmd/downloader
 
 ## build-server: Build API server
 build-server:
 	@echo "Building API server..."
 	@mkdir -p $(BUILD_DIR)
-	$(GO) build $(GOFLAGS) -o $(BUILD_DIR)/$(BINARY_SERVER) ./cmd/podcast-server
+	$(GO) build $(GOFLAGS) -o $(BUILD_DIR)/$(BINARY_SERVER) ./cmd/server
 
 ## test: Run all tests
 test:

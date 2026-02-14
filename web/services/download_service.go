@@ -29,19 +29,29 @@ type DownloadService struct {
 
 // NewDownloadService creates a new download service
 func NewDownloadService(downloadsDir string, taskService *TaskService) *DownloadService {
-	httpClient := &http.Client{
+	// Different timeouts for different operations
+	// - Metadata fetching: 60 seconds (HTML parsing is fast)
+	// - Audio file download: 30 minutes (large files need more time)
+	// - Image download: 2 minutes (images are small)
+	metadataClient := &http.Client{
 		Timeout: 60 * time.Second,
 	}
+	downloadClient := &http.Client{
+		Timeout: 30 * time.Minute,
+	}
+	imageClient := &http.Client{
+		Timeout: 2 * time.Minute,
+	}
 
-	// Create HTTP client wrapper for goquery
-	httpClientWrapper := &httpClientDoer{client: httpClient}
+	// Create HTTP client wrapper for goquery (used for metadata extraction)
+	httpClientWrapper := &httpClientDoer{client: metadataClient}
 
 	return &DownloadService{
 		downloadsDir:      downloadsDir,
-		httpClient:        httpClient,
+		httpClient:        metadataClient,
 		urlExtractor:      downloader.NewHTMLExtractor(httpClientWrapper),
-		fileDownloader:    downloader.NewHTTPDownloader(httpClient, false),
-		imageDownloader:   downloader.NewHTTPImageDownloader(httpClient, 10*1024*1024), // 10MB max
+		fileDownloader:    downloader.NewHTTPDownloader(downloadClient, false),
+		imageDownloader:   downloader.NewHTTPImageDownloader(imageClient, 10*1024*1024), // 10MB max
 		metadataExtractor: downloader.NewMetadataExtractor(httpClientWrapper),
 		metadataWriter:    downloader.NewMetadataWriter(),
 		taskService:       taskService,

@@ -50,6 +50,9 @@ func main() {
 	// Setup routes
 	mux := http.NewServeMux()
 
+	// Health check endpoint (for container orchestration)
+	mux.HandleFunc("/health", handlers.HealthHandler)
+
 	// Episode routes
 	mux.HandleFunc("/api/episodes", episodeHandler.GetEpisodes)
 	mux.HandleFunc("/api/episodes/", episodeHandler.GetShowNotes)

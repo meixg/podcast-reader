@@ -21,6 +21,30 @@ Podcast download tool and API server for downloading podcast audio from Xiaoyuzh
 
 ## 安装 (Installation)
 
+### 使用 Docker (推荐)
+
+```bash
+# 从 GitHub Container Registry 拉取镜像
+docker pull ghcr.io/meixg/podcast-reader:latest
+
+# 运行容器
+docker run -d \
+  -p 8080:8080 \
+  -v $(pwd)/downloads:/app/downloads \
+  --name podcast-reader \
+  ghcr.io/meixg/podcast-reader:latest
+```
+
+### 使用 Docker Compose
+
+```bash
+# 启动服务
+docker-compose up -d
+
+# 查看日志
+docker-compose logs -f
+```
+
 ### 从源码编译 (Build from source)
 
 ```bash
@@ -32,15 +56,16 @@ cd podcast-reader
 go mod download
 
 # 编译 CLI 工具
-go build -o podcast-downloader cmd/podcast-downloader/main.go
+go build -o podcast-downloader cmd/downloader/main.go
 
 # 编译 API 服务器
-go build -o podcast-server cmd/podcast-server/main.go
+go build -o podcast-server cmd/server/main.go
 ```
 
 ### 系统要求 (Requirements)
 
-- Go 1.21 或更高版本
+- Go 1.21 或更高版本（从源码编译）
+- Docker 20.10+（使用 Docker 镜像）
 
 ## 使用方法 (Usage)
 

@@ -17,14 +17,14 @@ import (
 
 // DownloadService handles the complete podcast download workflow
 type DownloadService struct {
-	downloadsDir        string
-	httpClient          *http.Client
-	urlExtractor        downloader.URLExtractor
-	fileDownloader      downloader.FileDownloader
-	imageDownloader     downloader.ImageDownloader
-	metadataExtractor   *downloader.MetadataExtractor
-	metadataWriter      *downloader.MetadataWriter
-	taskService         *TaskService
+	downloadsDir      string
+	httpClient        *http.Client
+	urlExtractor      downloader.URLExtractor
+	fileDownloader    downloader.FileDownloader
+	imageDownloader   downloader.ImageDownloader
+	metadataExtractor *downloader.MetadataExtractor
+	metadataWriter    *downloader.MetadataWriter
+	taskService       *TaskService
 }
 
 // NewDownloadService creates a new download service

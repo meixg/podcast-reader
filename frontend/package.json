@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc && vite build",
+    "build": "npx vue-tsc && vite build",
     "preview": "vite preview",
     "test": "vitest",
     "test:e2e": "cypress open",
